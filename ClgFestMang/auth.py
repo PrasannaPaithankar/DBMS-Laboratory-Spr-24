@@ -80,3 +80,4 @@ def load_logged_in_user():
 def logout():
     session.clear()
     return redirect(url_for('index'))
+
