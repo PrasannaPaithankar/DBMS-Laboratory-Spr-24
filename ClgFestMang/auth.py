@@ -94,7 +94,7 @@ def load_logged_in_user():
 
 @bp.route('/logout')
 def logout():
-    # session.clear()
+    session.clear()
     # return redirect(url_for('index'))
     return render_template('index.html',logout="You have been logged out")
 
