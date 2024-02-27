@@ -1,12 +1,10 @@
-import functools
-
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 from werkzeug.security import check_password_hash, generate_password_hash
-from ClgFestMang.db import get_db
+from . import models
+from . import database
 bp = Blueprint('auth', __name__, url_prefix='/auth')
-
 
 
 @bp.route('/register', methods=('GET', 'POST'))
@@ -16,7 +14,6 @@ def register():
         email = request.form['email']
         password = request.form['password']
         confirm_password = request.form['confirm_password']
-        db = get_db()
         error = None
 
         if not username:
@@ -30,55 +27,41 @@ def register():
 
         if error is None:
             try:
-                db.execute(
-                    "INSERT INTO user (username, email, password) VALUES (?, ?, ?)",
-                    (username, email, generate_password_hash(password)),
-                )
-                db.commit()
-            except db.IntegrityError:
-                error = f"User {username} is already registered."
-            else:
-                return redirect(url_for("auth.login"))
+                user = models.Student(Name=username, email=email, Dept='CSE', RID=1, password=generate_password_hash(password))
+                database.db_session.add(user)
+                database.db_session.commit()
+                return redirect(url_for('auth.login'))
+            except:
+                error = 'User {} is already registered.'.format(username)
 
         flash(error)
 
-    return render_template('register.html')
+    return render_template('auth/register.html')
 
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        db = get_db()
         error = None
-
-        # Obtain a cursor from the connection
-        cursor = db.cursor()
-
-        # Execute SQL query using the cursor
-        cursor.execute(
-            'SELECT * FROM "Student" WHERE username = %s', (username,)
-        )
-
-        # Fetch the user from the query result
-        user = cursor.fetchone()
-
-        # Close the cursor after executing the query
-        cursor.close()
+        user = models.Student.query.filter_by(Name=username).first()
 
         if user is None:
             error = 'Incorrect username.'
-        elif not check_password_hash(user['password'], password):
+        elif not check_password_hash(user.password, password):
             error = 'Incorrect password.'
 
         if error is None:
             session.clear()
-            session['user_id'] = user['id']
+            # roll no as user_id
+            print(user)
+            session['user_id'] = user.Roll
             return redirect(url_for('index'))
 
         flash(error)
 
-    return render_template('login.html')
+    return render_template('auth/login.html')
+
 
 @bp.before_app_request
 def load_logged_in_user():
@@ -87,14 +70,10 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        g.user = get_db().execute(
-            'SELECT * FROM user WHERE id = ?', (user_id,)
-        ).fetchone()
+        g.user = models.Student.query.filter_by(Roll=user_id).first()
+
 
 @bp.route('/logout')
 def logout():
     session.clear()
-    # return redirect(url_for('index'))
-    return render_template('index.html',logout="You have been logged out")
-
-
+    return redirect(url_for('index'))

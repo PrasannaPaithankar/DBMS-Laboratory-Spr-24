@@ -66,4 +66,4 @@ CREATE TABLE Organizer (
     FOREIGN KEY (EID) REFERENCES Event(EID)
 );
 
-INSERT INTO Event (EID, EName, Date, Desc, Winners) VALUES (1, 'Dance', '2020-01-01', 'Dance Competition', '1,2,3');
+INSERT INTO "Student" VALUES(1,'Sourav','CSE','psopo','1');
