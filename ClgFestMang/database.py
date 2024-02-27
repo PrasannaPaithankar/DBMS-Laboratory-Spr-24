@@ -25,9 +25,13 @@ def rebuild_db():
     import ClgFestMang.models
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
-    # add some data
-    role1 = ClgFestMang.models.Role(Rname='admin', Description='admin')
-    role2 = ClgFestMang.models.Role(Rname='student', Description='student')
+
+    # Initialize roles
+    role1 = ClgFestMang.models.Role(Rname='Student', Description='Student')
+    role2 = ClgFestMang.models.Role(Rname='Volunteer', Description='Volunteer')
+    role3 = ClgFestMang.models.Role(Rname='Organizer', Description='Organizer')
     db_session.add(role1)
     db_session.add(role2)
+    db_session.add(role3)
     db_session.commit()
+
