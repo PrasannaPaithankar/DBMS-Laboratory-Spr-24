@@ -96,7 +96,14 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        g.user = models.Student.query.filter_by(Roll=user_id).first()
+        user = models.Student.query.filter_by(Roll=user_id).first()
+        user2 = models.Participant.query.filter_by(PID=user_id).first()
+        if user is not None:
+            g.user = user
+        elif user2 is not None:
+            g.user = user2
+        else:
+            g.user = None
 
 
 @bp.route('/logout')
