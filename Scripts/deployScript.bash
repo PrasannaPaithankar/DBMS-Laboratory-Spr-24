@@ -17,7 +17,7 @@ source venv/bin/activate
 pip3 install -r ./DBMSweb/requirements.txt
 deactivate
 
-sudo mv ./DBMSweb/DBMSweb.conf /etc/apache2/sites-available
+sudo cp ./DBMSweb/DBMSweb.conf /etc/apache2/sites-available
 sudo a2ensite DBMSweb.conf
 sudo a2dissite 000-default.conf
 sudo certbot --apache
