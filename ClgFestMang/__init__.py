@@ -4,18 +4,19 @@ from .models import Event, Participant, Role, Student, Organizer, Volunteer
 from . import auth
 from flask_admin import Admin, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
+import argparse
+import json
 
 
-def create_app(test_config=None):
+def create_app(rebuild=False):
     app = Flask(__name__, instance_relative_config=True)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://prasanna:prasanna@localhost/clgfestmang'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SQLALCHEMY_ECHO'] = True
-    app.config['SESSION_TYPE'] = 'filesystem'
-    app.config['SESSION_FILE_DIR'] = '/tmp'
-    app.config['SECRET_KEY'] = 'pipi'
 
-    # rebuild_db()
+    with open('config.json') as config_file:
+        config = json.load(config_file)
+    app.config.update(config)
+
+    if rebuild: 
+        rebuild_db()
 
     app.register_blueprint(auth.bp)
 
@@ -32,3 +33,11 @@ def create_app(test_config=None):
         return render_template('index.html')
 
     return app
+
+if __name__ == '__main__':
+    args = argparse.ArgumentParser()
+    args.add_argument('--rebuild', type=bool)
+    args = args.parse_args()
+
+    app = create_app(args.dblink, args.rebuild)
+    app.run(debug=True)
