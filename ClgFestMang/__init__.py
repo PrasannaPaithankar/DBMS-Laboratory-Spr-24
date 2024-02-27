@@ -10,10 +10,7 @@ import json
 
 def create_app(rebuild=False):
     app = Flask(__name__, instance_relative_config=True)
-
-    with open('config.json') as config_file:
-        config = json.load(config_file)
-    app.config.update(config)
+    app.config.from_file("config.json", load=json.load)
 
     if rebuild: 
         rebuild_db()
