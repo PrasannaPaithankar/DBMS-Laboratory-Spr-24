@@ -26,6 +26,8 @@ def create_app(test_config=None):
     
     @app.route('/')
     def index():
+        # dbase = db.get_db()
+        
         return render_template('index.html')
     
     return app

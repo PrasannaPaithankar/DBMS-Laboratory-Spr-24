@@ -9,7 +9,7 @@ def get_db():
         g.db = psycopg2.connect(
             dbname='clgfestmang',
             user='prasanna',
-            password='',
+            password='prasanna',
             host='localhost'
         )
     return g.db
