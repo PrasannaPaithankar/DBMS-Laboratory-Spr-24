@@ -4,6 +4,8 @@ from flask import (
 from werkzeug.security import check_password_hash, generate_password_hash
 from . import models
 from . import database
+import random
+
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 
@@ -14,6 +16,12 @@ def register():
         email = request.form['email']
         password = request.form['password']
         confirm_password = request.form['confirm_password']
+        role = request.form['role']
+        college = request.form['college']
+        dept = request.form['dept']
+        accomodation = request.form['accommodation']
+        vegnonveg = request.form['vegnonveg']
+
         error = None
 
         if not username:
@@ -27,7 +35,15 @@ def register():
 
         if error is None:
             try:
-                user = models.Student(Name=username, email=email, Dept='CSE', RID=1, password=generate_password_hash(password))
+                if role == 'Student':
+                    user = models.Student(Name=username, email=email, password=generate_password_hash(
+                        password), Dept=dept, RID=1)
+                elif role == 'ExternalParticipant':
+                    accomodation = random.choice(
+                        ['Azad', 'Nehru', 'Patel', 'MS', 'HJB'])
+                    user = models.Participant(Name=username, email=email, password=generate_password_hash(
+                        password), CName=college, accomodation=accomodation, vegnonveg=vegnonveg)
+
                 database.db_session.add(user)
                 database.db_session.commit()
                 return redirect(url_for('auth.login'))
@@ -38,6 +54,7 @@ def register():
 
     return render_template('auth/register.html')
 
+
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
     if request.method == 'POST':
@@ -45,17 +62,26 @@ def login():
         password = request.form['password']
         error = None
         user = models.Student.query.filter_by(Name=username).first()
+        user2 = models.Participant.query.filter_by(Name=username).first()
 
-        if user is None:
+        who = None
+        if user is not None:
+            who = 'student'
+            if not check_password_hash(user.password, password):
+                error = 'Incorrect password.'
+        elif user2 is not None:
+            who = 'participant'
+            if not check_password_hash(user2.password, password):
+                error = 'Incorrect password.'
+        else:
             error = 'Incorrect username.'
-        elif not check_password_hash(user.password, password):
-            error = 'Incorrect password.'
 
         if error is None:
             session.clear()
-            # roll no as user_id
-            print(user)
-            session['user_id'] = user.Roll
+            if who == 'student':
+                session['user_id'] = user.Roll
+            elif who == 'participant':
+                session['user_id'] = user2.PID
             return redirect(url_for('index'))
 
         flash(error)

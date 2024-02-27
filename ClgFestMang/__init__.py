@@ -12,9 +12,7 @@ def create_app():
     app.config.from_file("config.json", load=json.load)
 
     # rebuild when the app is run for the first time
-    @app.before_first_request
-    def before_first_request():
-        rebuild_db()
+    # rebuild_db()
 
     app.register_blueprint(auth.bp)
 
