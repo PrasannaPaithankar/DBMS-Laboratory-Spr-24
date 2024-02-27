@@ -9,6 +9,8 @@ CREATE TABLE Participant (
     PID INTEGER PRIMARY KEY,
     Name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
+    accomodation VARCHAR(255) NOT NULL,
+    vegnonveg BOOLEAN NOT NULL,
     CName VARCHAR(255)
 );
 
