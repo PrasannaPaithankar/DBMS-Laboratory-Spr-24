@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<h1>Home</h1>
+<p>Welcome to the Home Page</p>
+{% if logout_message %}
+<p>{{ logout_message }}</p>
+{% endif %}
+{% endblock %}
+
+

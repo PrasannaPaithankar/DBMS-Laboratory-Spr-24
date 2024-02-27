@@ -1,4 +1,3 @@
-# Connect the postgresql database with the application
 import psycopg2
 import click
 from flask import current_app, g

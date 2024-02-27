@@ -4,30 +4,36 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 from werkzeug.security import check_password_hash, generate_password_hash
-
+from astropy.timeseries.periodograms.bls import methods
 from ClgFestMang.db import get_db
-
 bp = Blueprint('auth', __name__, url_prefix='/auth')
+
 
 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
     if request.method == 'POST':
         username = request.form['username']
+        email = request.form['email']
         password = request.form['password']
+        confirm_password = request.form['confirm_password']
         db = get_db()
         error = None
 
         if not username:
             error = 'Username is required.'
+        elif not email:
+            error = 'Email is required.'
         elif not password:
             error = 'Password is required.'
+        elif password != confirm_password:
+            error = 'Passwords do not match.'
 
         if error is None:
             try:
                 db.execute(
-                    "INSERT INTO user (username, password) VALUES (?, ?)",
-                    (username, generate_password_hash(password)),
+                    "INSERT INTO user (username, email, password) VALUES (?, ?, ?)",
+                    (username, email, generate_password_hash(password)),
                 )
                 db.commit()
             except db.IntegrityError:
@@ -37,8 +43,7 @@ def register():
 
         flash(error)
 
-    return render_template('auth/register.html')
-
+    return render_template('register.html')
 
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
@@ -47,9 +52,20 @@ def login():
         password = request.form['password']
         db = get_db()
         error = None
-        user = db.execute(
-            'SELECT * FROM user WHERE username = ?', (username,)
-        ).fetchone()
+
+        # Obtain a cursor from the connection
+        cursor = db.cursor()
+
+        # Execute SQL query using the cursor
+        cursor.execute(
+            'SELECT * FROM "Student" WHERE username = %s', (username,)
+        )
+
+        # Fetch the user from the query result
+        user = cursor.fetchone()
+
+        # Close the cursor after executing the query
+        cursor.close()
 
         if user is None:
             error = 'Incorrect username.'
@@ -63,7 +79,7 @@ def login():
 
         flash(error)
 
-    return render_template('auth/login.html')
+    return render_template('login.html')
 
 @bp.before_app_request
 def load_logged_in_user():
@@ -79,4 +95,7 @@ def load_logged_in_user():
 @bp.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('index'))
+    # return redirect(url_for('index'))
+    return render_template('index.html',logout="You have been logged out")
+
+
