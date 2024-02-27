@@ -14,10 +14,10 @@ cd DBMSweb
 sudo python3 -m venv venv
 sudo chmod -R a+rwx ../DBMSweb
 source venv/bin/activate
-pip3 install -r ./DBMSweb/requirements.txt
+pip3 install -r ./requirements.txt
 deactivate
 
-sudo cp ./DBMSweb/DBMSweb.conf /etc/apache2/sites-available
+sudo cp ./DBMSweb.conf /etc/apache2/sites-available
 sudo a2ensite DBMSweb.conf
 sudo a2dissite 000-default.conf
 sudo certbot --apache
