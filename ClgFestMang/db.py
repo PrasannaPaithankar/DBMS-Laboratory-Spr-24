@@ -8,9 +8,9 @@ from flask.cli import with_appcontext
 def get_db():
     if 'db' not in g:
         g.db = psycopg2.connect(
-            dbname='clgfestmang',
-            user='prasanna',
-            password='',
+            dbname='postgres',
+            user='postgres',
+            password='Utsaviitkgp03',
             host='localhost'
         )
     return g.db
@@ -42,3 +42,4 @@ def init_db_command():
 def init_app(app):
     app.teardown_appcontext(close_db)
     app.cli.add_command(init_db_command)
+
