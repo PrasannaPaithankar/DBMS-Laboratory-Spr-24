@@ -4,15 +4,16 @@ from .models import Event, Participant, Role, Student, Organizer, Volunteer
 from . import auth
 from flask_admin import Admin, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
-import argparse
 import json
 
 
-def create_app(rebuild=False):
+def create_app():
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_file("config.json", load=json.load)
 
-    if rebuild: 
+    # rebuild when the app is run for the first time
+    @app.before_first_request
+    def before_first_request():
         rebuild_db()
 
     app.register_blueprint(auth.bp)
@@ -30,11 +31,3 @@ def create_app(rebuild=False):
         return render_template('index.html')
 
     return app
-
-if __name__ == '__main__':
-    args = argparse.ArgumentParser()
-    args.add_argument('--rebuild', type=bool)
-    args = args.parse_args()
-
-    app = create_app(args.dblink, args.rebuild)
-    app.run(debug=True)

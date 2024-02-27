@@ -12,7 +12,7 @@ deactivate
 ### Run
 ```bash
 source venv/bin/activate
-flask run
+flask --app ClgFestMang run --debug
 ```
 
 ### Contribute
