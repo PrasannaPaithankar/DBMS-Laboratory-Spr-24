@@ -9,6 +9,8 @@ def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
         SECRET='pipi',
+        # DATABASE='clgfestmang'
+        # SQLALCHEMY_DATABASE_URI = 'postgresql://prasanna:prasanna@localhost/prasanna'
         # DATABASE=os.path.join(app.instance_path, 'clgfestmang.sqlite')
     )
     app.config['FLASK_ADMIN_SWATCH'] = 'lumen'
@@ -26,8 +28,14 @@ def create_app(test_config=None):
     
     @app.route('/')
     def index():
-        # dbase = db.get_db()
-        
+        dbase = db.get_db()
+        # list all events
+        cursor = dbase.cursor()
+        cursor.execute('SELECT * FROM Event')
+        events = cursor.fetchall()
+        cursor.close()
+        print(events)
+
         return render_template('index.html')
     
     return app
