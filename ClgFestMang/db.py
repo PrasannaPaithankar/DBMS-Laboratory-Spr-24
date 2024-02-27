@@ -1,4 +1,3 @@
-# Connect the postgresql database with the application
 import psycopg2
 import click
 from flask import current_app, g
@@ -8,9 +7,9 @@ from flask.cli import with_appcontext
 def get_db():
     if 'db' not in g:
         g.db = psycopg2.connect(
-            dbname='postgres',
-            user='postgres',
-            password='Utsaviitkgp03',
+            dbname='clgfestmang',
+            user='prasanna',
+            password='',
             host='localhost'
         )
     return g.db
@@ -42,4 +41,3 @@ def init_db_command():
 def init_app(app):
     app.teardown_appcontext(close_db)
     app.cli.add_command(init_db_command)
-
