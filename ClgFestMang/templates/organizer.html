@@ -6,9 +6,20 @@
     <h3 align="center">Welcome to the Organizer Panel</h3>
     <!-- input for mail input -->
     <div class="form-group">
+        <label for="subject">Enter subject</label>
+        <input
+            type="textarea"
+            class="form-control"
+            id="subject"
+            name="subject"
+            placeholder="Enter subject"
+        />
+    </div>
+
+    <div class="form-group">
         <label for="email">Enter mail</label>
         <input
-            type="text"
+            type="textarea"
             class="form-control"
             id="email"
             name="email"
@@ -24,14 +35,7 @@
             id="all"
             name="all"
             value="all"
-        />
-        <label for="specify">Specify</label>
-        <input
-            type="radio"
-            class="form-control"
-            id="specify"
-            name="specify"
-            value="specify"
+            onchange="showHide()"
         />
     </div>
 
@@ -48,24 +52,23 @@
     </div>
 
     <script>
-        $(document).ready(function () {
-            $('input[type=radio][name=all]').change(function () {
-                if (this.value == 'all') {
-                    $('#sent_to').hide();
-                }
-            });
-            $('input[type=radio][name=specify]').change(function () {
-                if (this.value == 'specify') {
-                    $('#sent_to').show();
-                }
-            });
-        });
+        function showHide() {
+            var role = document.getElementById("all").value;
+            var sent_to = document.getElementById("sent_to");
+            if (role == "all") {
+                sent_to.style.display = "none";
+            } else {
+                sent_to.style.display = "block";
+            }
+        }
     </script>
 
     <br />
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-    <button type="submit" class="btn btn-primary">Register</button>
+    <button type="submit" class="btn btn-primary">Send</button>
 </form>
+
+
 {% endblock %}
 
 
