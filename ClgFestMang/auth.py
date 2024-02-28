@@ -21,6 +21,7 @@ def register():
         dept = request.form['dept']
         accomodation = request.form['accommodation']
         vegnonveg = request.form['vegnonveg']
+        gender = request.form['gender']
 
         error = None
 
@@ -37,12 +38,12 @@ def register():
             try:
                 if role == 'Student':
                     user = models.Student(Name=username, email=email, password=generate_password_hash(
-                        password), Dept=dept, RID=1)
+                        password), Dept=dept, RID=1, gender=gender)
                 elif role == 'ExternalParticipant':
                     accomodation = random.choice(
                         ['Azad', 'Nehru', 'Patel', 'MS', 'HJB'])
                     user = models.Participant(Name=username, email=email, password=generate_password_hash(
-                        password), CName=college, accomodation=accomodation, vegnonveg=vegnonveg)
+                        password), CName=college, accomodation=accomodation, vegnonveg=vegnonveg, gender=gender)
 
                 database.db_session.add(user)
                 database.db_session.commit()
@@ -91,10 +92,62 @@ def login():
     return render_template('auth/login.html')
 
 
+@bp.route('/profile', methods=('GET', 'POST'))
+def profile():
+    if request.method == 'POST':
+        user_id = session.get('user_id')
+        user_role = session.get('role')
+        if user_role == 'external':
+            user = models.Participant.query.filter_by(PID=user_id).first()
+            email = request.form['email']
+            password = request.form['password']
+            confirm_password = request.form['confirm_password']
+            accomodation = request.form['accommodation']
+            vegnonveg = request.form['vegnonveg']
+
+            try:
+                if email:
+                    user.email = email
+                if password:
+                    if password == confirm_password:
+                        user.password = generate_password_hash(password)
+                if accomodation == "No":
+                    user.accomodation = None
+                if vegnonveg:
+                    user.vegnonveg = vegnonveg
+                database.db_session.commit()
+                flash('Profile updated successfully.')
+                return render_template('auth/profile.html', user=user)
+            except:
+                error = 'Failed to update profile.'
+                flash(error)
+                return render_template('auth/profile.html', user=user)
+        else:
+            user = models.Student.query.filter_by(Roll=user_id).first()
+            email = request.form['email']
+            password = request.form['password']
+            confirm_password = request.form['confirm_password']
+
+            try:
+                if email:
+                    user.email = email
+                if password:
+                    if password == confirm_password:
+                        user.password = generate_password_hash(password)
+                database.db_session.commit()
+                flash('Profile updated successfully.')
+                return render_template('auth/profile.html', user=user)
+            except:
+                error = 'Failed to update profile.'
+                flash(error)
+                return render_template('auth/profile.html', user=user)
+
+    return render_template('auth/profile.html')
+
+
 @bp.before_app_request
 def load_logged_in_user():
     user_id = session.get('user_id')
-    user_role = session.get('role')
 
     if user_id is None:
         g.user = None

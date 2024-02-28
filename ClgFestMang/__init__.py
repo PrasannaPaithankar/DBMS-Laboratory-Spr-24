@@ -34,6 +34,9 @@ def create_app():
     admin.add_view(ModelView(Organizer, db_session))
     admin.add_view(ModelView(Volunteer, db_session))
     admin.add_view(ModelView(Role, db_session))
+    admin.add_view(ModelView(Student_Event, db_session))
+    admin.add_view(ModelView(Event_Participant, db_session))
+    
     admin.init_app(app)
 
     @app.route('/')

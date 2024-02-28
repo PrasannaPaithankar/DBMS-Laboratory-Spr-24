@@ -26,19 +26,21 @@ class Participant(Base):
     __tablename__ = 'Participant'
     PID = Column(Integer, primary_key=True)
     Name = Column(String(255), nullable=False)
-    email = Column(String(255), nullable=False)
-    accomodation = Column(String(255), nullable=False)
-    vegnonveg = Column(Boolean, nullable=False)
-    CName = Column(String(255))
-    password = Column(String(255))
+    email = Column(String(255), nullable=False, unique=True)
+    accomodation = Column(String(255))
+    vegnonveg = Column(Boolean)
+    CName = Column(String(255), nullable=False)
+    password = Column(String(255), nullable=False)
+    gender = Column(Boolean, nullable=False)
 
-    def __init__(self, Name, email, accomodation, vegnonveg, CName, password):
+    def __init__(self, Name, email, accomodation, vegnonveg, CName, password, gender):
         self.Name = Name
         self.email = email
         self.accomodation = accomodation
         self.vegnonveg = vegnonveg
-        self.CName = CName  
+        self.CName = CName
         self.password = password
+        self.gender = gender
 
     def __repr__(self):
         return '<Participant %r>' % (self.Name)
@@ -63,17 +65,19 @@ class Student(Base):
     Roll = Column(Integer, primary_key=True)
     Name = Column(String(255), nullable=False)
     Dept = Column(String(255), nullable=False)
-    email = Column(String(255), nullable=False)
+    email = Column(String(255), nullable=False, unique=True)
     RID = Column(Integer, ForeignKey('Role.RID'))
     password = Column(String(255), nullable=False)
+    gender = Column(Boolean, nullable=False)
     role = relationship('Role', backref='students')
 
-    def __init__(self, Name, Dept, email, RID, password):
+    def __init__(self, Name, Dept, email, RID, password, gender):
         self.Name = Name
         self.Dept = Dept
         self.email = email
         self.RID = RID
         self.password = password
+        self.gender = gender
 
     def __repr__(self):
         return '<Student %r>' % (self.Name)
