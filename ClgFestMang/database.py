@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker, declarative_base
 import json
+from werkzeug.security import generate_password_hash
 
 with open('./instance/config.json') as config_file:
     config = json.load(config_file)
@@ -27,11 +28,13 @@ def rebuild_db():
     Base.metadata.create_all(bind=engine)
 
     # Initialize roles
-    role1 = ClgFestMang.models.Role(Rname='Student', Description='Student')
-    role2 = ClgFestMang.models.Role(Rname='Volunteer', Description='Volunteer')
-    role3 = ClgFestMang.models.Role(Rname='Organizer', Description='Organizer')
+    role1 = ClgFestMang.models.Role(Rname='user', Description='Standard User')
+    role2 = ClgFestMang.models.Role(Rname='admin', Description='Administrator')
     db_session.add(role1)
     db_session.add(role2)
-    db_session.add(role3)
+    stu = ClgFestMang.models.Student(Name='test', email='t@t', password=generate_password_hash('t'), Dept='CSE', RID=1)
+    db_session.add(stu)
+    stu = ClgFestMang.models.Student(Name='prasanna', email='p@p', password=generate_password_hash('p'), Dept='CSE', RID=2)
+    db_session.add(stu)
     db_session.commit()
 

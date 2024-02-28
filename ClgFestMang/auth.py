@@ -80,8 +80,10 @@ def login():
             session.clear()
             if who == 'student':
                 session['user_id'] = user.Roll
+                session['role'] = user.role.Rname
             elif who == 'participant':
                 session['user_id'] = user2.PID
+                session['role'] = 'external'
             return redirect(url_for('index'))
 
         flash(error)
@@ -92,18 +94,26 @@ def login():
 @bp.before_app_request
 def load_logged_in_user():
     user_id = session.get('user_id')
+    user_role = session.get('role')
 
     if user_id is None:
         g.user = None
+        g.role = None
     else:
         user = models.Student.query.filter_by(Roll=user_id).first()
         user2 = models.Participant.query.filter_by(PID=user_id).first()
         if user is not None:
             g.user = user
+            g.role = user.role.Rname
+            print(g.role)
         elif user2 is not None:
             g.user = user2
+            g.role = 'external'
         else:
             g.user = None
+
+    if request.endpoint.startswith('admin') and g.role != 'admin':
+        return redirect(url_for('auth.login'))
 
 
 @bp.route('/logout')

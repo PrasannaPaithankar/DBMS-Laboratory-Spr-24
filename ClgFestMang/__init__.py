@@ -20,7 +20,7 @@ def create_app():
 
 
     # rebuild when the app is run for the first time
-    # rebuild_db()
+    rebuild_db()
 
     csrf = CSRFProtect()
     csrf.init_app(app)
@@ -92,9 +92,6 @@ def create_app():
                     return redirect(url_for('events'))
                 return render_template('event_specific.html', event=event, user=user)
         return render_template('event_specific.html', event=event)
-
-
-
 
     @app.teardown_appcontext
     def shutdown_session(exception=None):
