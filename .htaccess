@@ -1,15 +1,2 @@
-# Enable mod_rewrite
 RewriteEngine On
-
-# Set the base directory
-RewriteBase /var/www/html/DBMSweb/
-
-# Redirect all requests to index.php
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php/$1 [L]
-
-RewriteEngine On
-RewriteRule ^(.*)$ http://10.145.95.65/$1 [L,P]
-
-ProxyPassReverse / http://10.145.95.65/
+RewriteRule ^Projects.html$ Misc.html
