@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Events{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <h2>Your Events</h2>
+      <ul class="list-group">
+        {% for event in events %}
+        <li class="list-group-item">
+          <a href="{{ url_for('event', EID=event.EID) }}">{{ event.EName }}</a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="col-md-6">
+      <h2>Other Events</h2>
+      <ul class="list-group">
+        {% for event in other_events %}
+        <li class="list-group-item">
+          <a href="{{ url_for('event', EID=event.EID) }}">{{ event.EName }}</a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+<div class="container mt-4" style="background-image: url('image.jpg'); background-size: cover;">
+  
+</div>
+{% endblock %}
