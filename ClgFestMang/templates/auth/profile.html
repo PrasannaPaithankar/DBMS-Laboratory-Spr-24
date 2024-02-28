@@ -18,7 +18,7 @@
 
     {% if role == "external" %}
     <h4 align="center">Edit accomodation</h4>
-    <div class="form-group" id="accommodation" style="display: none">
+    <div class="form-group" id="accommodation">
         <label for="accommodation">Accommodation</label>
         <select class="form-control" id="accommodation" name="accommodation">
             <option value="Yes">Yes</option>
@@ -27,11 +27,11 @@
     </div>
 
     <h4 align="center">Edit food preference</h4>
-    <div class="form-group" id="vegnonveg" style="display: none">
+    <div class="form-group" id="vegnonveg">
         <label for="vegnonveg">Food: Veg/Non-Veg</label>
         <select class="form-control" id="vegnonveg" name="vegnonveg">
-            <option value="Veg">Veg</option>
-            <option value="Non-Veg">Non-Veg</option>
+            <option value="False">Veg</option>
+            <option value="True">Non-Veg</option>
         </select>
     </div>
     {% endif %}

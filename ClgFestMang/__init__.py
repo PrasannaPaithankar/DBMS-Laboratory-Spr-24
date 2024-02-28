@@ -35,6 +35,7 @@ def create_app():
 
     @app.route('/')
     def index():
+        print(session)
         if 'role' in session:
             if session['role'] == 'external':
                 user = Participant.query.filter_by(PID=session['user_id']).first()

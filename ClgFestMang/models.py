@@ -1,5 +1,5 @@
 # models.py for the ClgFestMang app, the database connects to postgresql and the models are defined here
-from sqlalchemy import Column, Integer, String, Date, Boolean, ForeignKey, Character
+from sqlalchemy import Column, Integer, String, Date, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 from .database import Base
 
@@ -31,7 +31,7 @@ class Participant(Base):
     vegnonveg = Column(Boolean)
     CName = Column(String(255), nullable=False)
     password = Column(String(255), nullable=False)
-    gender = Column(Character, nullable=False)
+    gender = Column(String(1), nullable=False)
 
     def __init__(self, Name, email, accomodation, vegnonveg, CName, password, gender):
         self.Name = Name
@@ -68,7 +68,7 @@ class Student(Base):
     email = Column(String(255), nullable=False, unique=True)
     RID = Column(Integer, ForeignKey('Role.RID'))
     password = Column(String(255), nullable=False)
-    gender = Column(Character, nullable=False)
+    gender = Column(String(1), nullable=False)
     role = relationship('Role', backref='students')
 
     def __init__(self, Name, Dept, email, RID, password, gender):

@@ -20,7 +20,7 @@ def register():
         college = request.form['college']
         dept = request.form['dept']
         accomodation = request.form['accommodation']
-        vegnonveg = request.form['vegnonveg']
+        vegnonveg = bool(request.form['vegnonveg'])
         gender = request.form['gender']
 
         error = None
@@ -42,6 +42,8 @@ def register():
                 elif role == 'ExternalParticipant':
                     accomodation = random.choice(
                         ['Azad', 'Nehru', 'Patel', 'MS', 'HJB'])
+                    if accomodation == "No":
+                        accomodation = None
                     user = models.Participant(Name=username, email=email, password=generate_password_hash(
                         password), CName=college, accomodation=accomodation, vegnonveg=vegnonveg, gender=gender)
 
@@ -95,33 +97,33 @@ def login():
 @bp.route('/profile', methods=('GET', 'POST'))
 def profile():
     if request.method == 'POST':
-        user_id = session.get('user_id')
-        user_role = session.get('role')
+        user_id = g.user
+        user_role = g.role
         if user_role == 'external':
             user = models.Participant.query.filter_by(PID=user_id).first()
             email = request.form['email']
             password = request.form['password']
             confirm_password = request.form['confirm_password']
             accomodation = request.form['accommodation']
-            vegnonveg = request.form['vegnonveg']
+            vegnonveg = bool(request.form['vegnonveg'])
 
-            try:
-                if email:
-                    user.email = email
-                if password:
-                    if password == confirm_password:
-                        user.password = generate_password_hash(password)
-                if accomodation == "No":
-                    user.accomodation = None
-                if vegnonveg:
-                    user.vegnonveg = vegnonveg
-                database.db_session.commit()
-                flash('Profile updated successfully.')
-                return render_template('auth/profile.html', user=user, role=user_role)
-            except:
-                error = 'Failed to update profile.'
-                flash(error)
-                return render_template('auth/profile.html', user=user, role=user_role)
+            # try:
+            if email:
+                user.email = email
+            if password:
+                if password == confirm_password:
+                    user.password = generate_password_hash(password)
+            if accomodation == "No":
+                user.accomodation = None
+            if vegnonveg:
+                user.vegnonveg = vegnonveg
+            database.db_session.commit()
+            flash('Profile updated successfully.')
+            return render_template('auth/profile.html', user=user, role=user_role)
+            # except:
+            #     error = 'Failed to update profile.'
+            #     flash(error)
+            #     return render_template('auth/profile.html', user=user, role=user_role)
         else:
             user = models.Student.query.filter_by(Roll=user_id).first()
             email = request.form['email']
@@ -142,31 +144,30 @@ def profile():
                 flash(error)
                 return render_template('auth/profile.html', user=user, role=user_role)
               
-    return render_template('auth/profile.html', role=session['role'])
+    return render_template('auth/profile.html', role=g.role)
 
 
 @bp.before_app_request
 def load_logged_in_user():
     user_id = session.get('user_id')
+    user_role = session.get('role')
 
-    if user_id is None:
+    if user_role is None:
         g.user = None
         g.role = None
+    elif user_role == 'external':
+        user = models.Participant.query.filter_by(PID=user_id).first()
+        g.user = user.Roll
+        g.role = 'external'
     else:
         user = models.Student.query.filter_by(Roll=user_id).first()
-        user2 = models.Participant.query.filter_by(PID=user_id).first()
-        if user is not None:
-            g.user = user
-            g.role = user.role.Rname
-            print(g.role)
-        elif user2 is not None:
-            g.user = user2
-            g.role = 'external'
-        else:
-            g.user = None
+        g.user = user.Roll
+        g.role = user.role.Rname
 
-    if request.endpoint.startswith('admin') and g.role != 'admin':
-        return redirect(url_for('auth.login'))
+    end = request.endpoint
+    if end is not None:
+        if end.startswith('admin') and g.role != 'admin':
+            return redirect(url_for('auth.login'))
 
 
 @bp.route('/logout')
