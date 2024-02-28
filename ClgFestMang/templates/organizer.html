@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<h1>Organizer Panel</h1>
+<form method="POST">
+    <h3 align="center">Welcome to the Organizer Panel</h3>
+    <!-- input for mail input -->
+    <div class="form-group">
+        <label for="email">Enter mail</label>
+        <input
+            type="text"
+            class="form-control"
+            id="email"
+            name="email"
+            placeholder="Enter email"
+        />
+    </div>
+
+    <div class="form-group">
+        <label for="all">Mail all</label>
+        <input
+            type="radio"
+            class="form-control"
+            id="all"
+            name="all"
+            value="all"
+        />
+        <label for="specify">Specify</label>
+        <input
+            type="radio"
+            class="form-control"
+            id="specify"
+            name="specify"
+            value="specify"
+        />
+    </div>
+
+    <!-- sent to email input -->
+    <div class="form-group" id="sent_to" style="display: none">
+        <label for="sent_to">Sent to</label>
+        <input
+            type="text"
+            class="form-control"
+            id="sent_to"
+            name="sent_to"
+            placeholder="Enter email"
+        />
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('input[type=radio][name=all]').change(function () {
+                if (this.value == 'all') {
+                    $('#sent_to').hide();
+                }
+            });
+            $('input[type=radio][name=specify]').change(function () {
+                if (this.value == 'specify') {
+                    $('#sent_to').show();
+                }
+            });
+        });
+    </script>
+
+    <br />
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <button type="submit" class="btn btn-primary">Register</button>
+</form>
+{% endblock %}
+
+

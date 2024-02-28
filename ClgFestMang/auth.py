@@ -107,23 +107,23 @@ def profile():
             accomodation = request.form['accommodation']
             vegnonveg = bool(request.form['vegnonveg'])
 
-            # try:
-            if email:
-                user.email = email
-            if password:
-                if password == confirm_password:
-                    user.password = generate_password_hash(password)
-            if accomodation == "No":
-                user.accomodation = None
-            if vegnonveg:
-                user.vegnonveg = vegnonveg
-            database.db_session.commit()
-            flash('Profile updated successfully.')
-            return render_template('auth/profile.html', user=user, role=user_role)
-            # except:
-            #     error = 'Failed to update profile.'
-            #     flash(error)
-            #     return render_template('auth/profile.html', user=user, role=user_role)
+            try:
+                if email:
+                    user.email = email
+                if password:
+                    if password == confirm_password:
+                        user.password = generate_password_hash(password)
+                if accomodation == "No":
+                    user.accomodation = None
+                if vegnonveg:
+                    user.vegnonveg = vegnonveg
+                database.db_session.commit()
+                flash('Profile updated successfully.')
+                return render_template('auth/profile.html', user=user, role=user_role)
+            except:
+                error = 'Failed to update profile.'
+                flash(error)
+                return render_template('auth/profile.html', user=user, role=user_role)
         else:
             user = models.Student.query.filter_by(Roll=user_id).first()
             email = request.form['email']
@@ -157,7 +157,7 @@ def load_logged_in_user():
         g.role = None
     elif user_role == 'external':
         user = models.Participant.query.filter_by(PID=user_id).first()
-        g.user = user.Roll
+        g.user = user.PID
         g.role = 'external'
     else:
         user = models.Student.query.filter_by(Roll=user_id).first()
