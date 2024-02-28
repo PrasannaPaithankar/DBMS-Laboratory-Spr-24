@@ -1,2 +1,2 @@
-RewriteEngine On
-RewriteRule ^Projects.html$ Misc.html
+ProxyPass "/DBMS24" "http://10.145.95.65/"
+ProxyPassReverse "/DBMS24" "http://10.145.95.65/"
