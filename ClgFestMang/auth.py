@@ -117,11 +117,11 @@ def profile():
                     user.vegnonveg = vegnonveg
                 database.db_session.commit()
                 flash('Profile updated successfully.')
-                return render_template('auth/profile.html', user=user)
+                return render_template('auth/profile.html', user=user, role=user_role)
             except:
                 error = 'Failed to update profile.'
                 flash(error)
-                return render_template('auth/profile.html', user=user)
+                return render_template('auth/profile.html', user=user, role=user_role)
         else:
             user = models.Student.query.filter_by(Roll=user_id).first()
             email = request.form['email']
@@ -136,13 +136,13 @@ def profile():
                         user.password = generate_password_hash(password)
                 database.db_session.commit()
                 flash('Profile updated successfully.')
-                return render_template('auth/profile.html', user=user)
+                return render_template('auth/profile.html', user=user, role=user_role)
             except:
                 error = 'Failed to update profile.'
                 flash(error)
-                return render_template('auth/profile.html', user=user)
-
-    return render_template('auth/profile.html')
+                return render_template('auth/profile.html', user=user, role=user_role)
+              
+    return render_template('auth/profile.html', role=session['role'])
 
 
 @bp.before_app_request

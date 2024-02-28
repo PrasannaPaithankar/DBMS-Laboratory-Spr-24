@@ -10,13 +10,7 @@ from flask_wtf.csrf import CSRFProtect
 
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
-    # app.config.from_file("config.json", load=json.load)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://prasanna:prasanna@localhost/clgfestmang'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SQLALCHEMY_ECHO'] = True
-    app.config['SESSION_TYPE'] = 'filesystem'
-    app.config['SESSION_FILE_DIR'] = '/tmp'
-    app.config['SECRET_KEY'] = 'pipi'
+    app.config.from_file("config.json", load=json.load)
 
 
     # rebuild when the app is run for the first time
@@ -36,7 +30,7 @@ def create_app():
     admin.add_view(ModelView(Role, db_session))
     admin.add_view(ModelView(Student_Event, db_session))
     admin.add_view(ModelView(Event_Participant, db_session))
-    
+
     admin.init_app(app)
 
     @app.route('/')
