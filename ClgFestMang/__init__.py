@@ -48,13 +48,13 @@ def create_app():
             
         return render_template('index.html')
     
-    @app.route('/events')
+    @app.route('/events', methods=['GET', 'POST'])
     def events():
         if 'role' in session:
             if session['role'] == 'external':
                 user = Participant.query.filter_by(PID=session['user_id']).first()
-                events = Participant_Event.query.filter_by(PID=user.PID).all()
-                other_events = Participant_Event.query.filter(Participant_Event.PID != user.PID).all()
+                events = Event_Participant.query.filter_by(PID=user.PID).all()
+                other_events = Event_Participant.query.filter(Event_Participant.PID != user.PID).all()
                 events = [Event.query.filter_by(EID=event.EID).first() for event in events]
                 other_events = [Event.query.filter_by(EID=event.EID).first() for event in other_events]
 
@@ -70,10 +70,32 @@ def create_app():
         
         events = Event.query.all()
         return render_template('events.html', events=events)
-
-
-
     
+    @app.route('/event/<int:EID>', methods=['GET', 'POST'])
+    def event(EID):
+        event = Event.query.filter_by(EID=EID).first()
+        if 'role' in session:
+            if session['role'] == 'external':
+                user = Participant.query.filter_by(PID=session['user_id']).first()
+                if request.method == 'POST':
+                    event_participant = Event_Participant(EID=EID, PID=user.PID, Position=0)
+                    db_session.add(event_participant)
+                    db_session.commit()
+                    return redirect(url_for('events'))
+                return render_template('event_specific.html', event=event, user=user)
+            else:
+                user = Student.query.filter_by(Roll=session['user_id']).first()
+                if request.method == 'POST':
+                    student_event = Student_Event(Roll=user.Roll, EID=EID, Position=0)
+                    db_session.add(student_event)
+                    db_session.commit()
+                    return redirect(url_for('events'))
+                return render_template('event_specific.html', event=event, user=user)
+        return render_template('event_specific.html', event=event)
+
+
+
+
     @app.teardown_appcontext
     def shutdown_session(exception=None):
         db_session.remove()
