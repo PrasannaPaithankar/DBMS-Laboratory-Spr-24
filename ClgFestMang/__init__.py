@@ -79,6 +79,11 @@ def create_app():
                 user = Participant.query.filter_by(PID=session['user_id']).first()
                 if request.method == 'POST':
                     event_participant = Event_Participant(EID=EID, PID=user.PID, Position=0)
+                    # check if the participant is already registered
+                    if Event_Participant.query.filter_by(EID=EID, PID=user.PID).first() is not None:
+                        db_session.add(event_participant)
+                        db_session.commit()
+                        return redirect(url_for('events'))
                     db_session.add(event_participant)
                     db_session.commit()
                     return redirect(url_for('events'))
@@ -87,6 +92,11 @@ def create_app():
                 user = Student.query.filter_by(Roll=session['user_id']).first()
                 if request.method == 'POST':
                     student_event = Student_Event(Roll=user.Roll, EID=EID, Position=0)
+                    # check if the student is already registered
+                    if Student_Event.query.filter_by(Roll=user.Roll, EID=EID).first() is not None:
+                        db_session.add(student_event)
+                        db_session.commit()
+                        return redirect(url_for('events'))
                     db_session.add(student_event)
                     db_session.commit()
                     return redirect(url_for('events'))
