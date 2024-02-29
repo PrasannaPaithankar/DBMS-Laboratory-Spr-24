@@ -4,7 +4,7 @@ body {
     font-style: normal;
     padding: 0;
     margin: 0;
-    /* background-image: url('../static/bg2.jpg'); */
+    background-image: url('../static/bg2.jpg');
     background-size: cover;
     background-repeat: no-repeat;
 }
@@ -57,7 +57,7 @@ nav ul li a {
 }
 
 nav ul li a:hover {
-    color: black;
+    color: lightgrey;
 }
 
 nav ul li a,
@@ -81,7 +81,7 @@ nav.fill ul li a:after {
     width: 0%;
     content: '.';
     color: transparent;
-    background: darkgray;
+    background: lightgray;
     height: 1px;
 }
 
