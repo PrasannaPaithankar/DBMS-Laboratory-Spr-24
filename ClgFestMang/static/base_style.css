@@ -1,0 +1,114 @@
+body {
+    font-family: "Poppins", sans-serif;
+    font-weight: 100;
+    font-style: normal;
+    padding: 0;
+    margin: 0;
+    /* background-image: url('../static/bg2.jpg'); */
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+section {
+    height: 5vh;
+}
+
+.stroke {
+    margin: 0 auto;
+    background: transparent;
+    padding: 38px 45px;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.left ul,
+.right ul {
+    display: flex;
+    justify-content: flex-start; /* Align items to the start */
+}
+
+.right {
+    order: 1; /* Change the order to move it to the right */
+}
+
+nav ul {
+    list-style: none;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline-block;
+}
+
+nav ul li a {
+    display: block;
+    padding: 15px;
+    text-decoration: none;
+    /* dark color */
+    color:darkgray;
+    font-weight: 300;
+    font-size: 21px;
+    text-transform: uppercase;
+    margin: 0 10px;
+    transition: color .5s; /* Move the transition property here */
+}
+
+nav ul li a:hover {
+    color: black;
+}
+
+nav ul li a,
+nav ul li a:after,
+nav ul li a:before {
+    transition: all .5s;
+}
+
+nav.stroke ul li a,
+nav.fill ul li a {
+    position: relative;
+}
+
+nav.stroke ul li a:after,
+nav.fill ul li a:after {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 0%;
+    content: '.';
+    color: transparent;
+    background: darkgray;
+    height: 1px;
+}
+
+nav.stroke ul li a:hover:after {
+    width: 100%;
+}
+
+nav.fill ul li a {
+    transition: all 2s;
+}
+
+nav.fill ul li a:after {
+    text-align: left;
+    content: '.';
+    margin: 0;
+    opacity: 0;
+}
+
+nav.fill ul li a:hover {
+    z-index: 1;
+    color: black;
+}
+
+nav.fill ul li a:hover:after {
+    z-index: -10;
+    animation: fill 1s forwards;
+    -webkit-animation: fill 1s forwards;
+    -moz-animation: fill 1s forwards;
+    opacity: 1;
+}
