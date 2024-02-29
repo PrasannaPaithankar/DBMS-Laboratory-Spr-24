@@ -53,20 +53,20 @@ def create_app():
         if 'role' in session:
             if session['role'] == 'external':
                 user = Participant.query.filter_by(PID=session['user_id']).first()
-                user_events = Event_Participant.query.filter_by(PID=user.PID).all()
-                other_events = Event_Participant.query.filter(Event_Participant.PID != user.PID).all()
-                user_events = [Event.query.filter_by(EID=event.EID).first() for event in user_events]
-                other_events = [Event.query.filter_by(EID=event.EID).first() for event in other_events]
+                if user is not None:
+                    events = Event_Participant.query.filter_by(PID=user.PID).all()
+                    events = [Event.query.filter_by(EID=event.EID).first() for event in events]
+                    other_events = Event.query.filter(Event.EID.notin_([event.EID for event in events])).all()
 
-                return render_template('events.html', user_events=user_events, other_events=other_events)
+                    return render_template('events.html', events=events, other_events=other_events)
             else:
                 user = Student.query.filter_by(Roll=session['user_id']).first()
-                user_events = Student_Event.query.filter_by(Roll=user.Roll).all()
-                other_events = Student_Event.query.filter(Student_Event.Roll != user.Roll).all()
-                user_events = [Event.query.filter_by(EID=event.EID).first() for event in user_events]
-                other_events = [Event.query.filter_by(EID=event.EID).first() for event in other_events]
+                if user is not None :
+                    events = Student_Event.query.filter_by(Roll=user.Roll).all()
+                    events = [Event.query.filter_by(EID=event.EID).first() for event in events]
+                    other_events = Event.query.filter(Event.EID.notin_([event.EID for event in events])).all()
 
-                return render_template('events.html', user_events=user_events, other_events=other_events)
+                    return render_template('events.html', events=events, other_events=other_events)
         
         events = Event.query.all()
         return render_template('events.html', events=events)
