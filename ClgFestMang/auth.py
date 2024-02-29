@@ -118,6 +118,7 @@ def login():
 @bp.route('/edit_profile', methods=('GET', 'POST'))
 def edit_profile():
     if request.method == 'POST':
+        error = None
         user_id = g.user
         user_role = g.role
         username = None
