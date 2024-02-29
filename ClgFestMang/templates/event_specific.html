@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Event{% endblock %}
+{% block content %}
+<div class="container mt-4" style="background-image: url('image.jpg');">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">{{ event.EName }}</h5>
+          <p class="card-text"><strong>Date:</strong> {{ event.Date }}</p>
+          <p class="card-text"><strong>Description:</strong> {{ event.Desc }}</p>
+          <p class="card-text"><strong>Winners:</strong> {{ event.Winners }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Register for Event</h5>
+          <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            {% if user %}
+              {% if user.role == 'external' %}
+                <input type="hidden" name="role" value="external">
+              {% else %}
+                <input type="hidden" name="role" value="student">
+              {% endif %}
+            {% endif %}
+            <button type="submit" class="btn btn-primary">Register</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
