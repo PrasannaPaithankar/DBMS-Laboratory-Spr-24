@@ -12,7 +12,7 @@ from flask_mail import Mail, Message
 with open('./instance/config.json') as config_file:
     config = json.load(config_file)
 
-mail = Mail(app)
+mail = Mail()
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 
@@ -185,11 +185,11 @@ def edit_profile():
 def load_logged_in_user():
     session.modified = True
 
-    if 'last_accessed' in session:
-        last_accessed = session.get('last_accessed')
-        if last_accessed + timedelta(seconds=config['PERMANENT_SESSION_LIFETIME']) < datetime.now():
-            return redirect(url_for('logout'))
-    session['last_accessed'] = datetime.now()
+    # if 'last_accessed' in session:
+    #     last_accessed = session.get('last_accessed')
+    #     if last_accessed + timedelta(seconds=config['PERMANENT_SESSION_LIFETIME']) < datetime.now():
+    #         return redirect(url_for('logout'))
+    # session['last_accessed'] = datetime.now()
 
     user_id = session.get('user_id')
     user_role = session.get('role')

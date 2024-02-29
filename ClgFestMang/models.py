@@ -163,22 +163,22 @@ class Organizer(Base):
         return '<Organizer %r>' % (self.Roll)
 
 
-class Notification(Base):
-    __tablename__ = 'Notification'
-    NID = Column(Integer, primary_key=True)
-    EID = Column(Integer, ForeignKey('Event.EID'))
-    Message = Column(String(255), nullable=False)
-    OrganizerOnly = Column(Boolean, default=False)
-    event = relationship('Event', backref='notifications')
-    participant = relationship('Participant', backref='notifications')
+# class Notification(Base):
+#     __tablename__ = 'Notification'
+#     NID = Column(Integer, primary_key=True)
+#     EID = Column(Integer, ForeignKey('Event.EID'))
+#     Message = Column(String(255), nullable=False)
+#     OrganizerOnly = Column(Boolean, default=False)
+#     event = relationship('Event', backref='notifications')
+#     participant = relationship('Participant', backref='notifications')
 
-    def __init__(self, EID, Message, OrganizerOnly):
-        self.EID = EID
-        self.Message = Message
-        self.OrganizerOnly = OrganizerOnly
+#     def __init__(self, EID, Message, OrganizerOnly):
+#         self.EID = EID
+#         self.Message = Message
+#         self.OrganizerOnly = OrganizerOnly
 
-    def __repr__(self):
-        return '<Notification %r>' % (self.NID)
+#     def __repr__(self):
+#         return '<Notification %r>' % (self.NID)
 
 
 # notificationTrigger = DDL("""
