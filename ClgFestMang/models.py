@@ -1,11 +1,16 @@
 # models.py for the ClgFestMang app, the database connects to postgresql and the models are defined here
-from sqlalchemy import Column, Integer, String, Date, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, Date, Boolean, ForeignKey, event, DDL
 from sqlalchemy.orm import relationship
 from .database import Base
+import json
+
+with open('./instance/config.json') as config_file:
+    config = json.load(config_file)
 
 
 class Event(Base):
     __tablename__ = 'Event'
+    __searchable__ = ['EName', 'Desc']
     EID = Column(Integer, primary_key=True)
     EName = Column(String(255), nullable=False)
     Date = Column(Date, nullable=False)
@@ -24,6 +29,7 @@ class Event(Base):
 
 class Participant(Base):
     __tablename__ = 'Participant'
+    __searchable__ = ['Name', 'CName']
     PID = Column(Integer, primary_key=True)
     Name = Column(String(255), nullable=False)
     email = Column(String(255), nullable=False, unique=True)
@@ -62,6 +68,7 @@ class Role(Base):
 
 class Student(Base):
     __tablename__ = 'Student'
+    __searchable__ = ['Name', 'Dept']
     Roll = Column(Integer, primary_key=True)
     Name = Column(String(255), nullable=False)
     Dept = Column(String(255), nullable=False)
@@ -121,6 +128,7 @@ class Event_Participant(Base):
 
 class Volunteer(Base):
     __tablename__ = 'Volunteer'
+    __searchable__ = ['Roll']
     Roll = Column(Integer, ForeignKey(
         'Student.Roll'), primary_key=True)
     EID = Column(Integer, ForeignKey('Event.EID'), primary_key=True)
@@ -155,3 +163,30 @@ class Organizer(Base):
 
     def __repr__(self):
         return '<Organizer %r>' % (self.Roll)
+
+
+# class Notification(Base):
+#     __tablename__ = 'Notification'
+#     NID = Column(Integer, primary_key=True)
+#     EID = Column(Integer, ForeignKey('Event.EID'))
+#     Message = Column(String(255), nullable=False)
+#     OrganizerOnly = Column(Boolean, default=False)
+#     event = relationship('Event', backref='notifications')
+#     participant = relationship('Participant', backref='notifications')
+
+#     def __init__(self, EID, Message, OrganizerOnly):
+#         self.EID = EID
+#         self.Message = Message
+#         self.OrganizerOnly = OrganizerOnly
+
+#     def __repr__(self):
+#         return '<Notification %r>' % (self.NID)
+
+
+# notificationTrigger = DDL("""
+#     CREATE TRIGGER notify
+#     AFTER INSERT ON "Notification"
+#     FOR EACH ROW
+#     EXECUTE PROCEDURE notify_trigger();
+# """)
+# event.listen(Notification.__table__, 'after_create', notificationTrigger)
