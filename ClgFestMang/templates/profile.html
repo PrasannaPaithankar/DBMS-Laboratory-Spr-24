@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Event{% endblock %}
+{% block content %}
+<div class="container mt-4" style="background-image: url('image.jpg');">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Namaste {{ user.Name }}</h5>
+          {% if role == 'external' %}
+            <p class="card-text">External Participant</p>
+            <p class="card-text"><strong>e-mail:</strong> {{ user.email }}</p>
+            <p class="card-text"><strong>College</strong> {{ user.CName }}</p>
+            <p class="card-text"><strong>Accomodation</strong> {{ user.accomodation }}</p>
+            {% if user.vegnonveg == False %}
+            <p class="card-text"><strong>Food Preference</strong> Vegetarian</p>
+            {% else %}
+            <p class="card-text"><strong>Food Preference</strong> Non-Vegetarian</p>
+            {% endif %}
+          {% else %}
+            {% if role == 'user' %}
+              <p class="card-text">Student</p>
+            {% elif role == 'volunteer' %}
+              <p class="card-text">Volunteer</p>
+            {% elif role == 'admin' %}
+              <p class="card-text">Admin</p>
+            {% elif role == 'organizer' %}
+              <p class="card-text">Organizer</p>
+            {% endif %}
+            <p class="card-text"><strong>e-mail:</strong> {{ user.email }}</p>
+            <p class="card-text"><strong>Department</strong> {{ user.Dept }}</p>
+          {% endif %}
+          <p class="card-text"><strong>Gender</strong> {{ user.gender }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- add button for edit profile -->
+<div class = "container mt-4">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Edit Profile</h5>
+          <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <button type="submit" class="btn btn-primary">Edit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

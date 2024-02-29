@@ -20,7 +20,11 @@ def register():
         college = request.form['college']
         dept = request.form['dept']
         accomodation = request.form['accommodation']
-        vegnonveg = bool(request.form['vegnonveg'])
+        vegnonveg = request.form['vegnonveg']
+        if vegnonveg == "Veg":
+            vegnonveg = False
+        else:
+            vegnonveg = True
         gender = request.form['gender']
 
         error = None
@@ -94,8 +98,8 @@ def login():
     return render_template('auth/login.html')
 
 
-@bp.route('/profile', methods=('GET', 'POST'))
-def profile():
+@bp.route('/edit_profile', methods=('GET', 'POST'))
+def edit_profile():
     if request.method == 'POST':
         user_id = g.user
         user_role = g.role
@@ -105,7 +109,11 @@ def profile():
             password = request.form['password']
             confirm_password = request.form['confirm_password']
             accomodation = request.form['accommodation']
-            vegnonveg = bool(request.form['vegnonveg'])
+            vegnonveg = request.form['vegnonveg']
+            if vegnonveg == "Veg":
+                vegnonveg = False
+            else:
+                vegnonveg = True
 
             try:
                 if email:
@@ -119,11 +127,11 @@ def profile():
                     user.vegnonveg = vegnonveg
                 database.db_session.commit()
                 flash('Profile updated successfully.')
-                return render_template('auth/profile.html', user=user, role=user_role)
+                return render_template('auth/edit_profile.html', user=user, role=user_role)
             except:
                 error = 'Failed to update profile.'
                 flash(error)
-                return render_template('auth/profile.html', user=user, role=user_role)
+                return render_template('auth/edit_profile.html', user=user, role=user_role)
         else:
             user = models.Student.query.filter_by(Roll=user_id).first()
             email = request.form['email']
@@ -138,20 +146,20 @@ def profile():
                         user.password = generate_password_hash(password)
                 database.db_session.commit()
                 flash('Profile updated successfully.')
-                return render_template('auth/profile.html', user=user, role=user_role)
+                return render_template('auth/edit_profile.html', user=user, role=user_role)
             except:
                 error = 'Failed to update profile.'
                 flash(error)
-                return render_template('auth/profile.html', user=user, role=user_role)
+                return render_template('auth/edit_profile.html', user=user, role=user_role)
               
-    return render_template('auth/profile.html', role=g.role)
+    return render_template('auth/edit_profile.html', role=g.role)
 
 
 @bp.before_app_request
 def load_logged_in_user():
     user_id = session.get('user_id')
     user_role = session.get('role')
-
+    
     if user_role is None:
         g.user = None
         g.role = None

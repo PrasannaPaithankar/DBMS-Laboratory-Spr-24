@@ -115,6 +115,21 @@ def create_app():
                     return render_template('search.html', events=events)
         return render_template('search.html')
 
+    @app.route('/profile', methods=['GET', 'POST'])
+    def profile():
+        user_id = session['user_id']
+        user_role = session['role']
+        if user_role == 'external':
+            user = Participant.query.filter_by(PID=user_id).first()
+        elif user_role == 'organizer':
+            user = Organizer.query.filter_by(OID=user_id).first()
+        else:
+            user = Student.query.filter_by(Roll=user_id).first()
+        if request.method == 'POST':
+            return redirect(url_for('auth.edit_profile'))
+          
+        return render_template('profile.html', user=user, role=user_role)
+
     @app.teardown_appcontext
     def shutdown_session(exception=None):
         db_session.remove()
