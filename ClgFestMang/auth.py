@@ -68,7 +68,7 @@ def register():
                                 recipients=[email])
                 msg.body = body
                 mail.send(msg)
-
+                flash('Successfully registered', 'success')
                 return redirect(url_for('auth.login'))
             except:
                 error = 'User {} is already registered.'.format(username)
@@ -107,6 +107,7 @@ def login():
             elif who == 'participant':
                 session['user_id'] = user2.PID
                 session['role'] = 'external'
+            flash('Successfully logged in', 'success')
             return redirect(url_for('index'))
 
         flash(error)
