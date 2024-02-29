@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-4 mb-4">Search Results</h1>
+    <form method="POST" >
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <div class="form-group">
+            <label for="query">Search:</label>
+            <input type="text" class="form-control" id="query" name="query" placeholder="Enter your search query">
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+
+    {% if events %}
+    <h2>Events</h2>
+    <ul class="list-group">
+        {% for event in events %}
+        <li class="list-group-item">
+            <a href="{{ url_for('event', EID=event.EID) }}">{{ event.EName }}</a>
+            <p>{{ event.Desc }}</p>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if volunteers %}
+    <h2>Volunteers</h2>
+    <ul class="list-group">
+        {% for volunteer in volunteers %}
+        <li class="list-group-item">{{ volunteer.Name }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if not events and not volunteers %}
+    <p>No results found.</p>
+    {% endif %}
+</div>
+{% endblock %}
