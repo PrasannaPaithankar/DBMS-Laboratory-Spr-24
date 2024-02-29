@@ -21,18 +21,18 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         email = request.form['email']
-        password = request.form['password']
-        confirm_password = request.form['confirm_password']
         role = request.form['role']
         college = request.form['college']
-        dept = request.form['dept']
         accomodation = request.form['accommodation']
         vegnonveg = request.form['vegnonveg']
+        dept = request.form['dept']
         if vegnonveg == "Veg":
             vegnonveg = False
         else:
             vegnonveg = True
         gender = request.form['gender']
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
 
         error = None
 
