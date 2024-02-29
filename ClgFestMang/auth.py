@@ -1,11 +1,18 @@
-from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for
-)
-from werkzeug.security import check_password_hash, generate_password_hash
-from . import models
-from . import database
+import json
 import random
+from datetime import datetime, timedelta
 
+from flask import (Blueprint, flash, g, redirect, render_template, request,
+                   session, url_for)
+from werkzeug.security import check_password_hash, generate_password_hash
+
+from . import database, models
+from flask_mail import Mail, Message
+
+with open('./instance/config.json') as config_file:
+    config = json.load(config_file)
+
+mail = Mail(app)
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 
@@ -53,6 +60,15 @@ def register():
 
                 database.db_session.add(user)
                 database.db_session.commit()
+
+                subject = 'Registration Successful for DBMSFest 2024'
+                body = f'Hello {username},\n\nYou have successfully registered for DBMSFest 2024.\n\nRegards,\nDBMSFest 2024 Team.'
+                msg = Message(subject,
+                                sender=config['MAIL_USERNAME'],
+                                recipients=[email])
+                msg.body = body
+                mail.send(msg)
+
                 return redirect(url_for('auth.login'))
             except:
                 error = 'User {} is already registered.'.format(username)
@@ -103,6 +119,7 @@ def edit_profile():
     if request.method == 'POST':
         user_id = g.user
         user_role = g.role
+        username = None
         if user_role == 'external':
             user = models.Participant.query.filter_by(PID=user_id).first()
             email = request.form['email']
@@ -127,11 +144,10 @@ def edit_profile():
                     user.vegnonveg = vegnonveg
                 database.db_session.commit()
                 flash('Profile updated successfully.')
-                return render_template('auth/edit_profile.html', user=user, role=user_role)
+                username = user.Name
             except:
                 error = 'Failed to update profile.'
                 flash(error)
-                return render_template('auth/edit_profile.html', user=user, role=user_role)
         else:
             user = models.Student.query.filter_by(Roll=user_id).first()
             email = request.form['email']
@@ -146,20 +162,38 @@ def edit_profile():
                         user.password = generate_password_hash(password)
                 database.db_session.commit()
                 flash('Profile updated successfully.')
-                return render_template('auth/edit_profile.html', user=user, role=user_role)
+                username = user.Name
             except:
                 error = 'Failed to update profile.'
                 flash(error)
-                return render_template('auth/edit_profile.html', user=user, role=user_role)
-              
+            
+        if error is None:
+            subject = 'Profile Updated for DBMSFest 2024'
+            body = f'Hello {username},\n\nYour profile has been successfully updated for DBMSFest 2024.\n\nRegards,\nDBMSFest 2024 Team.'
+            msg = Message(subject,
+                            sender=config['MAIL_USERNAME'],
+                            recipients=[email])
+            msg.body = body
+            mail.send(msg)
+
+        return render_template('auth/edit_profile.html', user=user, role=user_role)
+
     return render_template('auth/edit_profile.html', role=g.role)
 
 
 @bp.before_app_request
 def load_logged_in_user():
+    session.modified = True
+
+    if 'last_accessed' in session:
+        last_accessed = session.get('last_accessed')
+        if last_accessed + timedelta(seconds=config['PERMANENT_SESSION_LIFETIME']) < datetime.now():
+            return redirect(url_for('logout'))
+    session['last_accessed'] = datetime.now()
+
     user_id = session.get('user_id')
     user_role = session.get('role')
-    
+
     if user_role is None:
         g.user = None
         g.role = None

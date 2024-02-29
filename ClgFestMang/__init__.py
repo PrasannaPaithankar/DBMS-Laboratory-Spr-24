@@ -1,11 +1,15 @@
-from flask import Flask, render_template, request, redirect, url_for, session
-from .database import Base, engine, db_session, rebuild_db
-from .models import Event, Participant, Role, Student, Organizer, Volunteer, Student_Event, Event_Participant
-from . import auth
+import json
+
+from flask import Flask, redirect, render_template, request, session, url_for, flash
 from flask_admin import Admin, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
-import json
+from flask_mail import Mail, Message
 from flask_wtf.csrf import CSRFProtect
+
+from . import auth
+from .database import Base, db_session, engine, rebuild_db
+from .models import (Event, Event_Participant, Organizer, Participant, Role,
+                     Student, Student_Event, Volunteer)
 
 
 def create_app():
@@ -91,13 +95,42 @@ def create_app():
     
     @app.route('/organizerPanel', methods=['GET', 'POST'])
     def organizerPanel():
+        if request.method == 'POST':
+            subject = request.form['subject']
+            message = request.form['email']
+            part_bool = request.form.get('participants', 0)
+            volu_bool = request.form.get('volunteers', 0)
+
+            organizer_id = session['user_id']
+            organizer = Organizer.query.filter_by(OID=organizer_id).first()
+            if part_bool == 1:
+                participants = Event_Participant.query.filter_by(EID=organizer.EID).all()
+            elif part_bool == 2:
+                participants = request.form.getlist('participants')
+                for participant in participants:
+                    participant = Participant.query.filter_by(PID=participant).first()
+            if volu_bool == 1:
+                volunteers = Volunteer.query.filter_by(EID=organizer.EID).all()
+
+                msg = Message(subject,
+                                sender=app.config['MAIL_USERNAME'],
+                                recipients=[volunteers.email])
+                msg.body = message
+                auth.mail.send(msg)
+            if part_bool > 0:
+                msg = Message(subject,
+                                sender=app.config['MAIL_USERNAME'],
+                                recipients=[participants.email])
+                msg.body = message
+                auth.mail.send(msg)
+            flash('Emails sent successfully')
+
         if 'role' in session:
             if session['role'] == 'organizer':
                 user = Organizer.query.filter_by(OID=session['user_id']).first()
                 events = Event.query.filter_by(OID=user.OID).all()
                 return render_template('organizerPanel.html', user=user, events=events)
-        # return redirect(url_for('index'))
-        return render_template('organizer.html')
+        return redirect(url_for('index'))
 
     @app.route('/search', methods=['GET', 'POST'])
     def search():

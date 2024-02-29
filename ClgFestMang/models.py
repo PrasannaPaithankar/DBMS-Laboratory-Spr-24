@@ -1,11 +1,9 @@
 # models.py for the ClgFestMang app, the database connects to postgresql and the models are defined here
-from sqlalchemy import Column, Integer, String, Date, Boolean, ForeignKey, event, DDL
+from sqlalchemy import (DDL, Boolean, Column, Date, ForeignKey, Integer,
+                        String, event)
 from sqlalchemy.orm import relationship
-from .database import Base
-import json
 
-with open('./instance/config.json') as config_file:
-    config = json.load(config_file)
+from .database import Base
 
 
 class Event(Base):
@@ -165,22 +163,22 @@ class Organizer(Base):
         return '<Organizer %r>' % (self.Roll)
 
 
-# class Notification(Base):
-#     __tablename__ = 'Notification'
-#     NID = Column(Integer, primary_key=True)
-#     EID = Column(Integer, ForeignKey('Event.EID'))
-#     Message = Column(String(255), nullable=False)
-#     OrganizerOnly = Column(Boolean, default=False)
-#     event = relationship('Event', backref='notifications')
-#     participant = relationship('Participant', backref='notifications')
+class Notification(Base):
+    __tablename__ = 'Notification'
+    NID = Column(Integer, primary_key=True)
+    EID = Column(Integer, ForeignKey('Event.EID'))
+    Message = Column(String(255), nullable=False)
+    OrganizerOnly = Column(Boolean, default=False)
+    event = relationship('Event', backref='notifications')
+    participant = relationship('Participant', backref='notifications')
 
-#     def __init__(self, EID, Message, OrganizerOnly):
-#         self.EID = EID
-#         self.Message = Message
-#         self.OrganizerOnly = OrganizerOnly
+    def __init__(self, EID, Message, OrganizerOnly):
+        self.EID = EID
+        self.Message = Message
+        self.OrganizerOnly = OrganizerOnly
 
-#     def __repr__(self):
-#         return '<Notification %r>' % (self.NID)
+    def __repr__(self):
+        return '<Notification %r>' % (self.NID)
 
 
 # notificationTrigger = DDL("""
