@@ -26,6 +26,7 @@ def register():
         accomodation = request.form['accommodation']
         vegnonveg = request.form['vegnonveg']
         dept = request.form['dept']
+        vol = request.form['interestVolunteer']
         if vegnonveg == "Veg":
             vegnonveg = False
         else:
@@ -48,10 +49,15 @@ def register():
         if error is None:
             # try:
             if role == 'Student':
-                user = models.Student(Name=username, email=email,
-                                        password=generate_password_hash(
-                                        password),
-                                        Dept=dept, RID=1, gender=gender)
+                events = models.Event.query.all()
+                events = [event.EID for event in events]
+                if vol == "True":
+                    user = models.Student(Name=username, email=email,
+                                            password=generate_password_hash(
+                                            password),
+                                            Dept=dept, RID=3, gender=gender)
+                    volunteer = models.Volunteer(Roll=user.Roll, EID=random.choice(events), password=user.password)
+                    database.db_session.add(volunteer)
             elif role == 'ExternalParticipant':
                 accomodation = random.choice(
                     ['Azad', 'Nehru', 'Patel', 'MS', 'HJB'])
@@ -90,29 +96,27 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        error = None
-        user = models.Student.query.filter_by(Name=username).first()
-        user2 = models.Participant.query.filter_by(Name=username).first()
+        role = request.form['role']
 
-        who = None
-        if user is not None:
-            who = 'student'
+        error = None
+        if role == 'Student':
+            user = models.Student.query.filter_by(Name=username).first()
+        elif role == 'ExternalParticipant':
+            user =models.Participant.query.filter_by(Name=username).first()
+
+        if user is None:
+            error = 'Incorrect username.'
+        else:
             if not check_password_hash(user.password, password):
                 error = 'Incorrect password.'
-        elif user2 is not None:
-            who = 'participant'
-            if not check_password_hash(user2.password, password):
-                error = 'Incorrect password.'
-        else:
-            error = 'Incorrect username.'
 
         if error is None:
             session.clear()
-            if who == 'student':
+            if role == 'Student':
                 session['user_id'] = user.Roll
                 session['role'] = user.role.Rname
-            elif who == 'participant':
-                session['user_id'] = user2.PID
+            elif role == 'ExternalParticipant':
+                session['user_id'] = user.PID
                 session['role'] = 'external'
             flash('Successfully logged in', 'success')
             return redirect(url_for('index'))
@@ -152,7 +156,6 @@ def edit_profile():
                 if vegnonveg:
                     user.vegnonveg = vegnonveg
                 database.db_session.commit()
-                flash('Profile updated successfully.')
                 username = user.Name
             except:
                 error = 'Failed to update profile.'
@@ -170,21 +173,28 @@ def edit_profile():
                     if password == confirm_password:
                         user.password = generate_password_hash(password)
                 database.db_session.commit()
-                flash('Profile updated successfully.')
                 username = user.Name
             except:
                 error = 'Failed to update profile.'
                 flash(error)
 
         if error is None:
-            subject = 'Profile Updated for DBMSFest 2024'
-            body = f'Hello {username},\n\nYour profile has been successfully updated for DBMSFest 2024.\n\nRegards,\nDBMSFest 2024 Team.'
-            msg = Message(subject,
-                          sender=config['MAIL_USERNAME'],
-                          recipients=[email])
-            msg.body = body
-            mail.send(msg)
-
+            try:
+                subject = 'Profile Updated for DBMSFest 2024'
+                body = f'Hello {username},\n\nYour profile has been successfully updated for DBMSFest 2024.\n\nRegards,\nDBMSFest 2024 Team.'
+                if email != '':
+                    email = user.email
+                msg = Message(subject,
+                                sender=config['MAIL_USERNAME'],
+                                recipients=[email])
+                msg.body = body
+                mail.send(msg)
+                flash('Profile updated successfully.')
+                username = user.Name
+            except:
+                error = 'Failed to update profile.'
+                flash(error)
+        
         return render_template('auth/edit_profile.html', user=user, role=user_role)
 
     return render_template('auth/edit_profile.html', role=g.role)

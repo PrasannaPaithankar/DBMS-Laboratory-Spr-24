@@ -13,13 +13,17 @@ class Event(Base):
     EName = Column(String(255), nullable=False)
     Date = Column(Date, nullable=False)
     Desc = Column(String(255))
-    Winners = Column(String(255))
+    Winners1 = Column(String(255))
+    Winners2 = Column(String(255))
+    Winners3 = Column(String(255))
 
-    def __init__(self, EName, Date, Desc, Winners):
+    def __init__(self, EName, Date, Desc, Winner1, Winner2, Winner3):
         self.EName = EName
         self.Date = Date
         self.Desc = Desc
-        self.Winners = Winners
+        self.Winner1 = Winner1
+        self.Winner2 = Winner2
+        self.Winner3 = Winner3
 
     def __repr__(self):
         return '<Event %r>' % (self.EName)

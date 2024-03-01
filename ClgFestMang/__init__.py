@@ -126,45 +126,99 @@ def create_app():
     @app.route('/organizerPanel', methods=['GET', 'POST'])
     def organizerPanel():
         if request.method == 'POST':
-            subject = request.form['subject']
-            message = request.form['email']
-            part_bool = request.form.get('participants', 0)
-            volu_bool = request.form.get('volunteers', 0)
+            if request.form['formtype'] == 'mail':
+                subject = request.form['subject']
+                message = request.form['email']
+                part_bool = request.form.get('participants', 0)
+                volu_bool = request.form.get('volunteers', 0)
 
-            organizer_id = session['user_id']
-            organizer = Organizer.query.filter_by(OID=organizer_id).first()
-            if part_bool == 1:
-                participants = Event_Participant.query.filter_by(
-                    EID=organizer.EID).all()
-            elif part_bool == 2:
-                participants = request.form.getlist('participants')
-                for participant in participants:
-                    participant = Participant.query.filter_by(
-                        PID=participant).first()
-            if volu_bool == 1:
-                volunteers = Volunteer.query.filter_by(EID=organizer.EID).all()
+                organizer_id = session['user_id']
+                organizer = Organizer.query.filter_by(Roll=organizer_id).first()
+                if part_bool == 1:
+                    participants = Event_Participant.query.filter_by(
+                        EID=organizer.EID).all()
+                elif part_bool == 2:
+                    participants = request.form.getlist('participants')
+                    for participant in participants:
+                        participant = Participant.query.filter_by(
+                            PID=participant).first()
+                if volu_bool == 1:
+                    volunteers = Volunteer.query.filter_by(EID=organizer.EID).all()
 
-                msg = Message(subject,
-                              sender=app.config['MAIL_USERNAME'],
-                              recipients=[volunteers.email])
-                msg.body = message
-                auth.mail.send(msg)
-            if part_bool > 0:
-                msg = Message(subject,
-                              sender=app.config['MAIL_USERNAME'],
-                              recipients=[participants.email])
-                msg.body = message
-                auth.mail.send(msg)
-            flash('Emails sent successfully')
+                    msg = Message(subject,
+                                sender=app.config['MAIL_USERNAME'],
+                                recipients=[volunteers.email])
+                    msg.body = message
+                    auth.mail.send(msg)
+                if part_bool > 0:
+                    msg = Message(subject,
+                                sender=app.config['MAIL_USERNAME'],
+                                recipients=[participants.email])
+                    msg.body = message
+                    auth.mail.send(msg)
+                flash('Emails sent successfully')
+                return render_template('organizerPanel.html', user=organizer)
+            
+            elif request.form['formtype'] == 'setWinner':
+                winner1 = request.form['winner1']
+                winner2 = request.form['winner2']
+                winner3 = request.form['winner3']
+                organizer_id = session['user_id']
+                organizer = Organizer.query.filter_by(Roll=organizer_id).first()
+                event = Event.query.filter_by(EID=organizer.EID).first()
+
+                subject = f'Congratulations! You have won {event.EName}'
+                message = f'Congratulations! You have won {event.EName}. Please contact the organizers for further details.'
+                winners = []
+                user = Participant.query.filter_by(Name=winner1).first()
+                if user is None:
+                    user = Student.query.filter_by(Name=winner1).first()
+                    if user is not None:
+                        winners.append(user)
+                else:
+                    error = 'Winner1 not found'
+                user = Participant.query.filter_by(Name=winner2).first()
+                if user is None:
+                    user = Student.query.filter_by(Name=winner2).first()
+                    if user is not None:
+                        winners.append(user)
+                else:
+                    error = 'Winner2 not found'
+                user = Participant.query.filter_by(Name=winner3).first()
+                if user is None:
+                    user = Student.query.filter_by(Name=winner3).first()
+                    if user is not None:
+                        winners.append(user)
+                else:
+                    error = 'Winner3 not found'
+                
+                if len(winners) == 3:
+                    event.Winner1 = winner1
+                    event.Winner2 = winner2
+                    event.Winner3 = winner3
+                    db_session.commit()
+
+                    for winner in winners:
+                        msg = Message(subject,
+                                    sender=app.config['MAIL_USERNAME'],
+                                    recipients=[winner.email])
+                        msg.body = message
+                        auth.mail.send(msg)
+                    flash('Winners notified successfully')
+                
+                if error is not None:
+                    flash(error)
+
+                return render_template('organizerPanel.html', user=organizer)
 
         if 'role' in session:
             if session['role'] == 'organizer':
                 user = Organizer.query.filter_by(
-                    OID=session['user_id']).first()
-                events = Event.query.filter_by(OID=user.OID).all()
+                    Roll=session['user_id']).first()
+                events = Event.query.filter_by(EID=user.EID).all()
                 return render_template('organizerPanel.html',
                                        user=user, events=events)
-        return render_template('organizer.html')
+        return render_template('index.html')
     
 
     @app.route('/search', methods=['GET', 'POST'])
@@ -173,7 +227,7 @@ def create_app():
             if 'role' in session:
                 if session['role'] == 'organizer':
                     user = Organizer.query.filter_by(
-                        OID=session['user_id']).first()
+                        Roll=session['user_id']).first()
                     query = request.form['query']
                     events = Event.query.filter(Event.EName.ilike(
                         f'%{query}%') | Event.Desc.ilike(f'%{query}%')).all()
@@ -195,7 +249,7 @@ def create_app():
         if user_role == 'external':
             user = Participant.query.filter_by(PID=user_id).first()
         elif user_role == 'organizer':
-            user = Organizer.query.filter_by(OID=user_id).first()
+            user = Organizer.query.filter_by(Roll=user_id).first()
         else:
             user = Student.query.filter_by(Roll=user_id).first()
         if request.method == 'POST':
