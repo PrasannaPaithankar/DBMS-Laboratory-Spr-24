@@ -46,39 +46,39 @@ def register():
             error = 'Passwords do not match.'
 
         if error is None:
-            try:
-                if role == 'Student':
-                    user = models.Student(Name=username, email=email,
-                                          password=generate_password_hash(
+            # try:
+            if role == 'Student':
+                user = models.Student(Name=username, email=email,
+                                        password=generate_password_hash(
+                                        password),
+                                        Dept=dept, RID=1, gender=gender)
+            elif role == 'ExternalParticipant':
+                accomodation = random.choice(
+                    ['Azad', 'Nehru', 'Patel', 'MS', 'HJB'])
+                if accomodation == "No":
+                    accomodation = None
+                user = models.Participant(Name=username, email=email,
+                                            password=generate_password_hash(
                                             password),
-                                          Dept=dept, RID=1, gender=gender)
-                elif role == 'ExternalParticipant':
-                    accomodation = random.choice(
-                        ['Azad', 'Nehru', 'Patel', 'MS', 'HJB'])
-                    if accomodation == "No":
-                        accomodation = None
-                    user = models.Participant(Name=username, email=email,
-                                              password=generate_password_hash(
-                                                password),
-                                              CName=college,
-                                              accomodation=accomodation,
-                                              vegnonveg=vegnonveg,
-                                              gender=gender)
+                                            CName=college,
+                                            accomodation=accomodation,
+                                            vegnonveg=vegnonveg,
+                                            gender=gender)
 
-                database.db_session.add(user)
-                database.db_session.commit()
+            database.db_session.add(user)
+            database.db_session.commit()
 
-                subject = 'Registration Successful for DBMSFest 2024'
-                body = f'Hello {username},\n\nYou have successfully registered for DBMSFest 2024.\n\nRegards,\nDBMSFest 2024 Team.'
-                msg = Message(subject,
-                              sender=config['MAIL_USERNAME'],
-                              recipients=[email])
-                msg.body = body
-                mail.send(msg)
-                flash('Successfully registered', 'success')
-                return redirect(url_for('auth.login'))
-            except:
-                error = 'User {} is already registered.'.format(username)
+            subject = 'Registration Successful for DBMSFest 2024'
+            body = f'Hello {username},\n\nYou have successfully registered for DBMSFest 2024.\n\nRegards,\nDBMSFest 2024 Team.'
+            msg = Message(subject,
+                            sender=config['MAIL_USERNAME'],
+                            recipients=[email])
+            msg.body = body
+            mail.send(msg)
+            flash('Successfully registered', 'success')
+            return redirect(url_for('auth.login'))
+            # except:
+            #     error = 'User {} is already registered.'.format(username)
 
         flash(error)
 
@@ -192,15 +192,16 @@ def edit_profile():
 
 @bp.before_app_request
 def load_logged_in_user():
-    # session.modified = True
-    # print(session)
-    # if 'last_accessed' in session:
-    #     print(session.get('last_accessed'))
-    #     last_accessed = session.get('last_accessed').replace(tzinfo=None)
-    #     if last_accessed + timedelta(seconds=config['PERMANENT_SESSION_LIFETIME']) < datetime.utcnow():
-    #         return redirect(url_for('auth/logout'))
-    # session['last_accessed'] = datetime.utcnow()
-
+    try:
+        session['user_id']
+        session['role']
+    except KeyError:
+        session.permanent = True
+        session['user_id'] = None
+        session['role'] = None
+        return redirect(url_for('index'))
+    
+    session.permanent = True
     user_id = session.get('user_id')
     user_role = session.get('role')
 

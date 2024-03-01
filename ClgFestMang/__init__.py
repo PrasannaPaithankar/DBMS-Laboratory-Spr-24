@@ -23,6 +23,8 @@ def create_app():
     csrf = CSRFProtect()
     csrf.init_app(app)
 
+    auth.mail.init_app(app)
+
     app.register_blueprint(auth.bp)
 
     admin = Admin(name='Admin Panel', template_mode='bootstrap4',
