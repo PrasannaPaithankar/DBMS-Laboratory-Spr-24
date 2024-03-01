@@ -4,10 +4,10 @@ from datetime import datetime, timedelta
 
 from flask import (Blueprint, flash, g, redirect, render_template, request,
                    session, url_for)
+from flask_mail import Mail, Message
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from . import database, models
-from flask_mail import Mail, Message
 
 with open('./instance/config.json') as config_file:
     config = json.load(config_file)
@@ -48,15 +48,22 @@ def register():
         if error is None:
             try:
                 if role == 'Student':
-                    user = models.Student(Name=username, email=email, password=generate_password_hash(
-                        password), Dept=dept, RID=1, gender=gender)
+                    user = models.Student(Name=username, email=email,
+                                          password=generate_password_hash(
+                                            password),
+                                          Dept=dept, RID=1, gender=gender)
                 elif role == 'ExternalParticipant':
                     accomodation = random.choice(
                         ['Azad', 'Nehru', 'Patel', 'MS', 'HJB'])
                     if accomodation == "No":
                         accomodation = None
-                    user = models.Participant(Name=username, email=email, password=generate_password_hash(
-                        password), CName=college, accomodation=accomodation, vegnonveg=vegnonveg, gender=gender)
+                    user = models.Participant(Name=username, email=email,
+                                              password=generate_password_hash(
+                                                password),
+                                              CName=college,
+                                              accomodation=accomodation,
+                                              vegnonveg=vegnonveg,
+                                              gender=gender)
 
                 database.db_session.add(user)
                 database.db_session.commit()
@@ -64,8 +71,8 @@ def register():
                 subject = 'Registration Successful for DBMSFest 2024'
                 body = f'Hello {username},\n\nYou have successfully registered for DBMSFest 2024.\n\nRegards,\nDBMSFest 2024 Team.'
                 msg = Message(subject,
-                                sender=config['MAIL_USERNAME'],
-                                recipients=[email])
+                              sender=config['MAIL_USERNAME'],
+                              recipients=[email])
                 msg.body = body
                 mail.send(msg)
                 flash('Successfully registered', 'success')
@@ -168,13 +175,13 @@ def edit_profile():
             except:
                 error = 'Failed to update profile.'
                 flash(error)
-            
+
         if error is None:
             subject = 'Profile Updated for DBMSFest 2024'
             body = f'Hello {username},\n\nYour profile has been successfully updated for DBMSFest 2024.\n\nRegards,\nDBMSFest 2024 Team.'
             msg = Message(subject,
-                            sender=config['MAIL_USERNAME'],
-                            recipients=[email])
+                          sender=config['MAIL_USERNAME'],
+                          recipients=[email])
             msg.body = body
             mail.send(msg)
 
@@ -185,13 +192,14 @@ def edit_profile():
 
 @bp.before_app_request
 def load_logged_in_user():
-    session.modified = True
-
+    # session.modified = True
+    # print(session)
     # if 'last_accessed' in session:
-    #     last_accessed = session.get('last_accessed')
-    #     if last_accessed + timedelta(seconds=config['PERMANENT_SESSION_LIFETIME']) < datetime.now():
-    #         return redirect(url_for('logout'))
-    # session['last_accessed'] = datetime.now()
+    #     print(session.get('last_accessed'))
+    #     last_accessed = session.get('last_accessed').replace(tzinfo=None)
+    #     if last_accessed + timedelta(seconds=config['PERMANENT_SESSION_LIFETIME']) < datetime.utcnow():
+    #         return redirect(url_for('auth/logout'))
+    # session['last_accessed'] = datetime.utcnow()
 
     user_id = session.get('user_id')
     user_role = session.get('role')

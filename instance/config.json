@@ -4,7 +4,7 @@
     "SQLALCHEMY_ECHO": true,
     "SESSION_TYPE": "filesystem",
     "SESSION_FILE_DIR": "/tmp",
-    "PERMANENT_SESSION_LIFETIME": 1800,
+    "PERMANENT_SESSION_LIFETIME": 10,
     "SECRET_KEY": "pipi",
     "MAIL_SERVER": "smtp.gmail.com",
     "MAIL_PORT": 587,
