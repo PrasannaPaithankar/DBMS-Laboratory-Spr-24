@@ -18,7 +18,7 @@ def create_app():
     app.config.from_file("config.json", load=json.load)
 
     # rebuild when the app is run for the first time
-    rebuild_db()
+    # rebuild_db()
 
     csrf = CSRFProtect()
     csrf.init_app(app)
@@ -42,15 +42,14 @@ def create_app():
 
     @app.route('/')
     def index():
-        print(session)
-        if 'user' in session:
+        if 'role' in session:
             if session['role'] == 'external':
                 user = Participant.query.filter_by(
                     PID=session['user_id']).first()
-                return render_template('index.html', user=user)
+                return render_template('index.html', user=user, role=session['role'])
             else:
                 user = Student.query.filter_by(Roll=session['user_id']).first()
-                return render_template('index.html', user=user)
+                return render_template('index.html', user=user, role=session['role'])
 
         return render_template('index.html')
 
@@ -69,7 +68,7 @@ def create_app():
                         Event.EID.notin_([event.EID for event in events])).all()
 
                     return render_template('events.html', events=events,
-                                           other_events=other_events)
+                                           other_events=other_events, user=user, role=session['role'])
             else:
                 user = Student.query.filter_by(Roll=session['user_id']).first()
                 if user is not None:
@@ -81,7 +80,7 @@ def create_app():
                         Event.EID.notin_([event.EID for event in events])).all()
 
                     return render_template('events.html', events=events,
-                                           other_events=other_events)
+                                           other_events=other_events, user=user, role=session['role'])
 
         events = Event.query.all()
         return render_template('events.html', events=events)
@@ -224,7 +223,7 @@ def create_app():
                     Roll=session['user_id']).first()
                 events = Event.query.filter_by(EID=user.EID).all()
                 return render_template('organizerPanel.html',
-                                       user=user, events=events)
+                                       user=user, events=events, role=session['role'])
         return render_template('index.html')
     
 
