@@ -180,6 +180,22 @@ class Notification(Base):
     def __repr__(self):
         return '<Notification %r>' % (self.NID)
 
+class food(Base):
+    __tablename__ = 'food'
+    FID = Column(Integer, primary_key=True)
+    Name = Column(String(255), nullable=False)
+    type = Column(Boolean, nullable=False)
+    detail = Column(String(255), nullable=False)
+
+    def __init__(self, Name, type, detail):
+        self.Name = Name
+        self.type = type
+        self.detail = detail
+
+    def __repr__(self):
+        return '<food %r>' % (self.Name)
+
+
 # notificationTrigger = DDL("""
 #     CREATE TRIGGER notify
 #     AFTER INSERT ON "Notification"

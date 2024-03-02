@@ -5,9 +5,9 @@
 {% block content %}
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-12"> <!-- Increased width to col-md-10 -->
-                <div class="card mt-5">
-                    <div class="card-body" style="width: 500px;">
+            <div class="col-md-12" >
+                <div class="card mt-5" style="background-color: rgba(76, 139, 182, 0.3);">
+                    <div class="card-body" style="width: 430px;">
                         <h1 class="card-title text-center mb-4">Welcome, {{ user.student.Name }}</h1>
 
                         <h2>Your Events</h2>
@@ -24,7 +24,7 @@
                             {% endfor %}
                         </ul>
 
-                        <div class="card mb-4" style="width: 500px;">
+                        <div class="card mb-4" style="width: 380px;">
                             <div class="card-body mx-auto">
                                 <h2 class="card-title text-center mb-4">Send Email</h2>
                                 <form action="/organizerPanel" method="post">
@@ -51,7 +51,7 @@
                             </div>
                         </div>
 
-                        <div class="card mb-4" style="width: 500px;">
+                        <div class="card mb-4" style="width: 380px;">
                             <div class="card-body mx-auto">
                                 <h2 class="card-title text-center mb-4">Select Winners</h2>
                                 <form action="{{ url_for('organizerPanel') }}" method="post">
@@ -73,8 +73,17 @@
                                 </form>
                             </div>
                         </div>
-                        <h2><a href = "/sendnotification">SEND NOTIFICATIONS</a></h2>
-                        <h2><a href = "/searchvolunteers">Search Volunteers</a>
+                        <div class="card mb-4" style="width: 380px; height: 40px;">
+                            <h2><a href="/sendnotification" class="btn btn-primary btn-block">SEND NOTIFICATIONS</a></h2>
+                        </div>
+                        
+                        <div class="card mb-4" style="width: 380px; height: 40px;">
+                            <h2><a href="/searchvolunteers" class="btn btn-primary btn-block">Search Volunteers</a></h2>
+                        </div>
+                        
+                        <div class="card mb-4" style="width: 380px; height: 40px;">
+                            <h2><a href="/modifyfood" class="btn btn-primary btn-block">ADD FOOD</a></h2>
+                        </div>
                         {% with messages = get_flashed_messages() %}
                             {% if messages %}
                                 <ul class="list-group mt-4">

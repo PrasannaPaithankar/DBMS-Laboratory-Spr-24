@@ -10,11 +10,13 @@ from flask_wtf.csrf import CSRFProtect
 from datetime import datetime
 from sqlalchemy.orm import joinedload
 from sqlalchemy import and_
+from itertools import chain
+
 
 from . import auth
 from .database import db_session, rebuild_db, init_db
 from .models import (Event, Event_Participant, Organizer, Participant, Role,
-                     Student, Student_Event, Volunteer, Notification)
+                     Student, Student_Event, Volunteer, Notification,food)
 
 
 def create_app():
@@ -24,7 +26,7 @@ def create_app():
     # rebuild when the app is run for the first time
     with app.app_context():
         init_db()
-    # rebuild_db()
+    rebuild_db()
 
     csrf = CSRFProtect()
     csrf.init_app(app)
@@ -43,6 +45,8 @@ def create_app():
     admin.add_view(ModelView(Role, db_session))
     admin.add_view(ModelView(Student_Event, db_session))
     admin.add_view(ModelView(Event_Participant, db_session))
+    admin.add_view(ModelView(Notification, db_session))
+    admin.add_view(ModelView(food, db_session))
 
     admin.init_app(app)
 
@@ -75,24 +79,13 @@ def create_app():
 
                     return render_template('events.html', events=events,
                                            other_events=other_events, user=user, role=session['role'])
-            elif session['role'] == 'user':
+            else :
                 user = Student.query.filter_by(Roll=session['user_id']).first()
+                user_events = Student_Event.query.filter_by(Roll=user.Roll).all()
+                user_volunteers = Volunteer.query.filter_by(Roll=user.Roll).all()
                 if user is not None:
-                    events = Student_Event.query.filter_by(
-                        Roll=user.Roll).all()
-                    events = [Event.query.filter_by(
-                        EID=event.EID).first() for event in events]
-                    other_events = Event.query.filter(
-                        Event.EID.notin_([event.EID for event in events])).all()
-
-                    return render_template('events.html', events=events,
-                                           other_events=other_events, user=user, role=session['role'])
-            elif session['role'] == 'volunteer':
-                user = Student.query.filter_by(
-                    Roll=session['user_id']).first()
-                if user is not None:
-                    events = Volunteer.query.filter_by(
-                        Roll=user.Roll).all()
+                    combined_events = list(chain(user_events, user_volunteers))
+                    events = list(set(combined_events))
                     events = [Event.query.filter_by(
                         EID=event.EID).first() for event in events]
                     other_events = Event.query.filter(
@@ -107,51 +100,68 @@ def create_app():
     @app.route('/event/<int:EID>', methods=['GET', 'POST'])
     def event(EID):
         event = Event.query.filter_by(EID=EID).first()
+        already_part = False
+        already_vol = False
+
+        if 'role' in session:
+            # set values of already_part and already_vol if the user is already registered or a volunteer
+            if session['role'] == 'external':
+                user = Participant.query.filter_by(
+                    PID=session['user_id']).first()
+                if Event_Participant.query.filter_by(EID=EID, PID=user.PID).first() is not None:
+                    already_part = True
+            elif session['role'] == 'user' or session['role'] == 'volunteer':
+                user = Student.query.filter_by(Roll=session['user_id']).first()
+                if Student_Event.query.filter_by(Roll=user.Roll, EID=EID).first() is not None:
+                    already_part = True
+                if Volunteer.query.filter_by(Roll=user.Roll, EID=EID).first() is not None:
+                    already_vol = True
         
         if 'role' in session:
             if session['role'] == 'external':
                 user = Participant.query.filter_by(
                     PID=session['user_id']).first()
                 if request.method == 'POST':
-
-                    if Event_Participant.query.filter_by(EID=EID,PID=user.PID).first() is None:
-                        event_participant = Event_Participant(
-                        EID=EID, PID=user.PID, Position=0)
-                        db_session.add(event_participant)
-                        db_session.commit()
-                        return redirect(url_for('events'))
+                    if request.form.get('register_as') == 'participant':
+                        if Event_Participant.query.filter_by(EID=EID,PID=user.PID).first() is None:
+                            event_participant = Event_Participant(
+                            EID=EID, PID=user.PID, Position=0)
+                            db_session.add(event_participant)
+                            db_session.commit()
+                            already_part = True
+                            return redirect(url_for('events'))
 
                     return redirect(url_for('events'))
                 return render_template('event_specific.html',
-                                       event=event, user=user, role=session['role'])
-            elif session['role'] == 'user':
+                                       event=event, user=user, role=session['role'], already_part = already_part)
+            elif session['role'] == 'user' or session['role'] == 'volunteer':
                 user = Student.query.filter_by(Roll=session['user_id']).first()
                 if request.method == 'POST':
-                    # check if the student is already registered
-                    if Student_Event.query.filter_by(Roll=user.Roll, EID=EID).first() is None:
-                        student_event = Student_Event(
-                        Roll=user.Roll, EID=EID, Position=0)
-                        db_session.add(student_event)
-                        db_session.commit()
-                        return redirect(url_for('events'))
+                    if request.form.get('register_as') == 'participant':
+                        if Student_Event.query.filter_by(Roll=user.Roll, EID=EID).first() is None:
+                            student_event = Student_Event(
+                            Roll=user.Roll, EID=EID, Position=0)
+                            db_session.add(student_event)
+                            db_session.commit()
+                            already_part = True
+                            return redirect(url_for('events'))
+                    elif request.form.get('register_as') == 'volunteer':
+                        if Volunteer.query.filter_by(Roll=user.Roll, EID=EID).first() is None:
+                            volunteer = Volunteer(Roll=user.Roll, EID=EID)
+                            db_session.add(volunteer)
+                            db_session.commit()
+                            already_vol = True
+                            return redirect(url_for('events'))
                     return redirect(url_for('events'))
                 return render_template('event_specific.html',
-                                       event=event, user=user, role = session['role'])
-            elif session['role'] == 'volunteer':
-                user = Student.query.filter_by(
-                    Roll=session['user_id']).first()
-                if request.method == 'POST':
-                    if Volunteer.query.filter_by(Roll=user.Roll, EID=EID).first() is None:
-                        volunteer = Volunteer(Roll=user.Roll, EID=EID)
-                        db_session.add(volunteer)
-                        db_session.commit()
-                        return redirect(url_for('events'))
-                    db_session.add(volunteer)
-                    db_session.commit()
-                    return redirect(url_for('events'))
-                return render_template('event_specific.html', event=event, user = user, role=session['role'])
+                                       event=event, user=user, role = session['role'], already_part = already_part, already_vol = already_vol)
+            else:
+                already_part = True
+                already_vol = True
+                return render_template('event_specific.html',user = user, role = session['role'], event=event, already_part = already_part, already_vol = already_vol)
                 
-        return render_template('event_specific.html', event=event)
+        return render_template('event_specific.html', event=event, already_part = already_part, already_vol = already_vol)
+
 
     @app.route('/organizerPanel', methods=['GET', 'POST'])
     def organizerPanel():
@@ -373,6 +383,38 @@ def create_app():
             flash('Notification sent successfully')
 
         return render_template('sendnotification.html', volunteers=[{'Name':volunteers[1],'Roll':volunteers[0]}], user = session['user_id'], role = session['role'])
+    
+    @app.route('/food')
+    def efood():
+        if 'role' in session:
+            if session['role'] == 'external':
+                user = Participant.query.filter_by(
+                    PID=session['user_id']).first()
+                foodtype = user.vegnonveg
+                print(foodtype)
+                foods = db_session.query(food.Name, food.detail).filter_by(type=foodtype).all()
+                print(foods)
+                return render_template('food.html',foods = foods, foodtype = foodtype,user=user, role=session['role'])
+            else:
+                user = Student.query.filter_by(Roll=session['user_id']).first()
+                return render_template('food.html',foodtype = None ,user=user, role=session['role'])
+            
+        return render_template('food.html',foodtype = None)
+
+    @app.route('/modifyfood', methods=['GET', 'POST'])
+    def modifyfood():
+        if request.method == 'POST':
+            foodtype = bool(request.form['foodtype'])
+            name = request.form['name']
+            detail = request.form['detail']
+
+            db_session.add(food(Name=name, type=foodtype, detail=detail))
+            db_session.commit()
+            flash('Food added successfully')
+
+        return render_template('modifyfood.html')
+        
+
 
     @app.teardown_appcontext
     def shutdown_session(exception=None):

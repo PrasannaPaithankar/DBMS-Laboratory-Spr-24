@@ -32,13 +32,25 @@
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
           {% if user %}
             {% if role == 'external' %}
-            <input type="hidden" name="role" value="external">
-            <button type="submit" class="btn btn-primary">Register as participant</button>
-            {% elif role == 'user' %}
-            <input type="hidden" name="role" value="student">
-            <button type="submit" class="btn btn-primary">Register as participant</button>
-            <input type="hidden" name="role" value="volunteer">
-            <button type="submit" class="btn btn-primary">Register as volunteer</button>
+              {% if already_part %}
+                <p>You have already registered for this event as a participant</p>
+              {% else %}
+                <input type="hidden" name="role" value="external">
+                <button type="submit" class="btn btn-primary" name="register_as" value="participant">Register as participant</button>
+              {% endif %}
+            {% elif role == 'user' or role == 'volunteer'%}
+              {% if already_part %}
+                <p>You have already registered for this event as a participant</p>
+              {% else %}
+                {% if already_vol %}
+                  <p>You have already registered for this event as a volunteer</p>
+                {% else %}
+                  <input type="hidden" name="role" value="student">
+                  <button type="submit" class="btn btn-primary" name="register_as" value="participant">Register as participant</button>
+                  <input type="hidden" name="role" value="volunteer">
+                  <button type="submit" class="btn btn-primary" name="register_as" value="volunteer">Register as volunteer</button>
+                {% endif %}
+              {% endif %}
             {% endif %}
           {% endif %}
         </form>
