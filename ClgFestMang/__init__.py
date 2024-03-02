@@ -245,21 +245,13 @@ def create_app():
                 session['role']
             except KeyError:
                 session['role'] = 'user'
-            if session['role'] == 'organizer':
-                user = Organizer.query.filter_by(
-                    Roll=session['user_id']).first()
-                query = request.form['query']
-                events = Event.query.filter(Event.EName.ilike(
-                    f'%{query}%') | Event.Desc.ilike(f'%{query}%')).all()
-                volunteers = Volunteer.query.filter(
-                    Volunteer.Name.ilike(f'%{query}%')).all()
-                return render_template('search.html', events=events,
-                                        volunteers=volunteers, user=user, role=session['role'])
-            else:
-                query = request.form['query']
-                events = Event.query.filter(Event.EName.ilike(
-                    f'%{query}%') | Event.Desc.ilike(f'%{query}%')).all()
-                return render_template('search.html', events=events, role=session['role'])
+            role = None
+            if 'role' in session:
+                role = session['role']
+            query = request.form['query']
+            events = Event.query.filter(Event.EName.ilike(
+                f'%{query}%') | Event.Desc.ilike(f'%{query}%')).all()
+            return render_template('search.html', events=events, user = role)
         return render_template('search.html')
 
     @app.route('/profile', methods=['GET', 'POST'])
