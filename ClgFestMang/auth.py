@@ -123,6 +123,39 @@ def login():
         flash(error)
     return render_template('auth/login.html')
 
+@bp.route('/forgotPassword', methods=('GET', 'POST'))
+def forgotPassword():
+    if request.method == 'POST':
+        email = request.form['email']
+
+        error = None
+        user = models.Student.query.filter_by(email=email).first()
+        if user is None:
+            user = models.Participant.query.filter_by(email=email).first()
+            if user is None:
+                error = 'User email is not registered.'
+        
+        if error is None:
+            try:
+                password = ''.join(random.choice('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') for i in range(10))
+                user.password = generate_password_hash(password)
+                database.db_session.commit()
+
+                subject = 'Password Reset for DBMSFest 2024'
+                body = f'Hello {user.Name},\n\nYour password has been reset for DBMSFest 2024.\n\nYour new password is: {password}\nEdit your password in Edit Profile\n\nRegards,\nDBMSFest 2024 Team.'
+    
+                msg = Message(subject,
+                                sender=config['MAIL_USERNAME'],
+                                recipients=[email])
+                msg.body = body
+                mail.send(msg)
+                flash('Password reset link sent to your email.', 'success')
+                return redirect(url_for('auth.login'))
+            except:
+                error = 'Failed to send password reset link.'
+                flash(error)
+        flash(error)
+    return render_template('auth/forgotPassword.html')
 
 @bp.route('/edit_profile', methods=('GET', 'POST'))
 def edit_profile():
