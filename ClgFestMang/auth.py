@@ -51,7 +51,7 @@ def register():
                     user = models.Student(Name=username, email=email,
                                                 password=generate_password_hash(
                                                 password),
-                                                Dept=dept, RID=3, gender=gender)
+                                                Dept=dept, RID=1, gender=gender)
 
                 elif role == 'ExternalParticipant':
                     accomodation = random.choice(
@@ -123,6 +123,39 @@ def login():
         flash(error)
     return render_template('auth/login.html')
 
+@bp.route('/forgotPassword', methods=('GET', 'POST'))
+def forgotPassword():
+    if request.method == 'POST':
+        email = request.form['email']
+
+        error = None
+        user = models.Student.query.filter_by(email=email).first()
+        if user is None:
+            user = models.Participant.query.filter_by(email=email).first()
+            if user is None:
+                error = 'User email is not registered.'
+        
+        if error is None:
+            try:
+                password = ''.join(random.choice('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') for i in range(10))
+                user.password = generate_password_hash(password)
+                database.db_session.commit()
+
+                subject = 'Password Reset for DBMSFest 2024'
+                body = f'Hello {user.Name},\n\nYour password has been reset for DBMSFest 2024.\n\nYour new password is: {password}\nIt is recommended to edit your password in Edit Profile.\n\nRegards,\nDBMSFest 2024 Team.'
+    
+                msg = Message(subject,
+                                sender=config['MAIL_USERNAME'],
+                                recipients=[email])
+                msg.body = body
+                mail.send(msg)
+                flash('Password reset link sent to your email.', 'success')
+                return redirect(url_for('auth.login'))
+            except:
+                error = 'Failed to send password reset link.'
+                flash(error)
+        flash(error)
+    return render_template('auth/forgotPassword.html')
 
 @bp.route('/edit_profile', methods=('GET', 'POST'))
 def edit_profile():
@@ -198,8 +231,12 @@ def edit_profile():
 
 @bp.before_app_request
 def load_logged_in_user():
-    user_id = session.get('user_id')
-    user_role = session.get('role')
+    try:
+        user_id = session.get('user_id')
+        user_role = session.get('role')
+    except:
+        user_id = None
+        user_role = None
 
     if (user_role is None) or (user_id is None):
         g.user = None

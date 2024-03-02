@@ -47,7 +47,7 @@ def rebuild_db():
 
     stu = ClgFestMang.models.Student(Name='organ', email='o@o', password=generate_password_hash('o'), Dept='EE', RID=4, gender='F')
     db_session.add(stu)
-    org = ClgFestMang.models.Organizer(Roll=3, EID=1, email='o@o')
+    org = ClgFestMang.models.Organizer(Roll=3, EID=1)
     db_session.add(org)
 
     stu = ClgFestMang.models.Student(Name='vol', email='v@v', password=generate_password_hash('v'), Dept='ME', RID=3, gender='M')
