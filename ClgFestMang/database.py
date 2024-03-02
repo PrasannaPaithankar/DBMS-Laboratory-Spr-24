@@ -42,7 +42,7 @@ def rebuild_db():
     
     event = ClgFestMang.models.Event(EName='Debate', Date='2024-01-01', Desc='Debate with Aviral', Winner1='Aviral', Winner2='Aviral', Winner3='Aviral')
     db_session.add(event)
-    part = ClgFestMang.models.Participant(Name='harsh', email='h@h', accomodation='Azad', vegnonveg=True, CName='IITD', password=generate_password_hash('h'), gender='M')
+    part = ClgFestMang.models.Participant(Name='harsh', email='harshsharma2024@gmail.com', accomodation='Azad', vegnonveg=True, CName='IITD', password=generate_password_hash('h'), gender='M')
     db_session.add(part)
 
     stu = ClgFestMang.models.Student(Name='organ', email='o@o', password=generate_password_hash('o'), Dept='EE', RID=4, gender='F')

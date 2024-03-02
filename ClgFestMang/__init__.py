@@ -42,8 +42,7 @@ def create_app():
 
     @app.route('/')
     def index():
-        print(session)
-        if 'user' in session:
+        if 'role' in session:
             if session['role'] == 'external':
                 user = Participant.query.filter_by(
                     PID=session['user_id']).first()
@@ -96,7 +95,7 @@ def create_app():
                 if request.method == 'POST':
                     event_participant = Event_Participant(
                         EID=EID, PID=user.PID, Position=0)
-                    # check if the participant is already registered
+
                     if Event_Participant.query.filter_by(EID=EID,PID=user.PID).first() is not None:
                         db_session.add(event_participant)
                         db_session.commit()
@@ -134,7 +133,6 @@ def create_app():
 
                 organizer_id = session['user_id']
                 organizer = Organizer.query.filter_by(Roll=organizer_id).first()
-                print(organizer.EID)
                 if part_bool == "1":
                     event_participants = Event_Participant.query.filter_by(
                         EID=organizer.EID).all()
@@ -164,7 +162,7 @@ def create_app():
                     msg.body = message
                     auth.mail.send(msg)
                 flash('Emails sent successfully')
-                return render_template('organizerPanel.html', user=organizer)
+                return render_template('organizerPanel.html', user=organizer, events=Event.query.filter_by(EID=organizer.EID).first())
             
             elif request.form['formtype'] == 'setWinner':
                 winner1 = request.form['winner1']
@@ -177,27 +175,37 @@ def create_app():
                 subject = f'Congratulations! You have won {event.EName}'
                 message = f'Congratulations! You have won {event.EName}. Please contact the organizers for further details.'
                 winners = []
+                error = None
+
                 user = Participant.query.filter_by(Name=winner1).first()
                 if user is None:
                     user = Student.query.filter_by(Name=winner1).first()
                     if user is not None:
                         winners.append(user)
+                    else:
+                        error = 'Winner1 not found'
                 else:
-                    error = 'Winner1 not found'
+                    winners.append(user)
+
                 user = Participant.query.filter_by(Name=winner2).first()
                 if user is None:
                     user = Student.query.filter_by(Name=winner2).first()
                     if user is not None:
                         winners.append(user)
+                    else:
+                        error = 'Winner2 not found'
                 else:
-                    error = 'Winner2 not found'
+                    winners.append(user)
+
                 user = Participant.query.filter_by(Name=winner3).first()
                 if user is None:
                     user = Student.query.filter_by(Name=winner3).first()
                     if user is not None:
                         winners.append(user)
+                    else:
+                        error = 'Winner3 not found'
                 else:
-                    error = 'Winner3 not found'
+                    winners.append(user)
                 
                 if len(winners) == 3:
                     event.Winner1 = winner1
@@ -216,7 +224,7 @@ def create_app():
                 if error is not None:
                     flash(error)
 
-                return render_template('organizerPanel.html', user=organizer)
+                return render_template('organizerPanel.html', user=organizer, events=[event])
 
         if 'role' in session:
             if session['role'] == 'organizer':
