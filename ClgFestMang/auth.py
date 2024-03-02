@@ -51,7 +51,7 @@ def register():
                     user = models.Student(Name=username, email=email,
                                                 password=generate_password_hash(
                                                 password),
-                                                Dept=dept, RID=3, gender=gender)
+                                                Dept=dept, RID=1, gender=gender)
 
                 elif role == 'ExternalParticipant':
                     accomodation = random.choice(
@@ -198,8 +198,12 @@ def edit_profile():
 
 @bp.before_app_request
 def load_logged_in_user():
-    user_id = session.get('user_id')
-    user_role = session.get('role')
+    try:
+        user_id = session.get('user_id')
+        user_role = session.get('role')
+    except:
+        user_id = None
+        user_role = None
 
     if (user_role is None) or (user_id is None):
         g.user = None

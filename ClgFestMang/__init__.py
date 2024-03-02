@@ -7,10 +7,14 @@ from flask_admin.contrib.sqla import ModelView
 from flask_mail import Message
 from flask_wtf.csrf import CSRFProtect
 
+from datetime import datetime
+from sqlalchemy.orm import joinedload
+from sqlalchemy import and_
+
 from . import auth
-from .database import db_session, rebuild_db
+from .database import db_session, rebuild_db, init_db
 from .models import (Event, Event_Participant, Organizer, Participant, Role,
-                     Student, Student_Event, Volunteer)
+                     Student, Student_Event, Volunteer, Notification)
 
 
 def create_app():
@@ -18,6 +22,8 @@ def create_app():
     app.config.from_file("config.json", load=json.load)
 
     # rebuild when the app is run for the first time
+    with app.app_context():
+        init_db()
     # rebuild_db()
 
     csrf = CSRFProtect()
@@ -100,8 +106,6 @@ def create_app():
                         db_session.add(event_participant)
                         db_session.commit()
                         return redirect(url_for('events'))
-                    db_session.add(event_participant)
-                    db_session.commit()
                     return redirect(url_for('events'))
                 return render_template('event_specific.html',
                                        event=event, user=user)
@@ -115,8 +119,6 @@ def create_app():
                         db_session.add(student_event)
                         db_session.commit()
                         return redirect(url_for('events'))
-                    db_session.add(student_event)
-                    db_session.commit()
                     return redirect(url_for('events'))
                 return render_template('event_specific.html',
                                        event=event, user=user)
@@ -239,7 +241,6 @@ def create_app():
     @app.route('/search', methods=['GET', 'POST'])
     def search():
         if request.method == 'POST':
-            # if 'role' in session:
             try:
                 session['role']
             except KeyError:
@@ -267,14 +268,90 @@ def create_app():
         user_role = session['role']
         if user_role == 'external':
             user = Participant.query.filter_by(PID=user_id).first()
-        elif user_role == 'organizer':
-            user = Organizer.query.filter_by(Roll=user_id).first()
         else:
             user = Student.query.filter_by(Roll=user_id).first()
         if request.method == 'POST':
             return redirect(url_for('auth.edit_profile'))
 
         return render_template('profile.html', user=user, role=user_role)
+    
+    @app.route('/schedule', methods=['GET', 'POST'])
+    def schedule():
+        events = Event.query.all()
+        events.sort(key=lambda x: x.Date)
+
+        return render_template('schedule.html', events=events)
+    
+    @app.route('/sendnotification', methods=['GET', 'POST'])
+    def sendnotification():
+        print(session)
+        # Sending all the volunteers Roll and name to the form
+
+        volunteers= (
+            db_session.query(Volunteer.Roll, Student.Name)
+            .join(Student, Volunteer.Roll == Student.Roll)
+            .all()
+        )
+
+        print(volunteers)
+
+
+        if request.method == 'POST':
+            Vroll = request.form['volunteers']
+            message = request.form['message']
+            print(Vroll)
+            print(message)
+            # Add it to the database
+            notification = Notification(receiver=Vroll, message=message , time=datetime.now() , sender=session['user_id'])
+            db_session.add(notification)
+            db_session.commit()
+            print('Notification sent successfully')
+            flash('Notification sent successfully')
+
+
+        return render_template('sendnotification.html' , volunteers=volunteers, user = session['user_id'], role = session['role'])
+
+    @app.route('/volunteerdashboard')
+    def volunteerdashboard():
+        messages = (
+            db_session.query(Student.Name, Student.Roll, Notification.message, Notification.time)
+            .join(Student, and_(Notification.sender == Student.Roll, Notification.receiver == session['user_id']))
+            .order_by(Notification.time.desc())  # Sorting by time in descending order
+            .all()
+        )
+
+        print(messages)
+        return render_template('volunteer_dashboard.html' , messages=messages, user = session['user_id'], role = session['role'])
+
+    @app.route('/searchvolunteers')
+    def searchvolunteers():
+        volunteers = (
+        db_session.query(Volunteer.Roll, Student.Name, Student.email, Event.EName)
+        .join(Event, Volunteer.EID == Event.EID)
+        .join(Student, Volunteer.Roll == Student.Roll)
+        .all()
+        )
+
+        print(volunteers)
+        return render_template('searchvolunteers.html' , volunteers=volunteers, user = session['user_id'], role = session['role'])
+
+    @app.route('/sendnotficationvolunteer/<volunteers>', methods=['GET', 'POST'])
+    def sendnotficationvolunteer(volunteers):
+        volunteers = eval(volunteers)
+        print(volunteers)
+        if request.method == 'POST':
+            Vroll = request.form['volunteers']
+            message = request.form['message']
+            print(Vroll)
+            print(message)
+            # Add it to the database
+            notification = Notification(receiver=Vroll, message=message, time=datetime.now(), sender=session['user_id'])
+            db_session.add(notification)
+            db_session.commit()
+            print('Notification sent successfully')
+            flash('Notification sent successfully')
+
+        return render_template('sendnotification.html', volunteers=[{'Name':volunteers[1],'Roll':volunteers[0]}], user = session['user_id'], role = session['role'])
 
     @app.teardown_appcontext
     def shutdown_session(exception=None):

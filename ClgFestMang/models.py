@@ -150,36 +150,35 @@ class Organizer(Base):
     Roll = Column(Integer, ForeignKey(
         'Student.Roll'), primary_key=True)
     EID = Column(Integer, ForeignKey('Event.EID'), primary_key=True)
-    email = Column(String(255), nullable=False)
     student = relationship('Student', backref='organizers')
     event = relationship('Event', backref='organizers')
 
-    def __init__(self, Roll, EID, email):
+    def __init__(self, Roll, EID):
         self.Roll = Roll
         self.EID = EID
-        self.email = email
 
     def __repr__(self):
         return '<Organizer %r>' % (self.Roll)
 
 
-# class Notification(Base):
-#     __tablename__ = 'Notification'
-#     NID = Column(Integer, primary_key=True)
-#     EID = Column(Integer, ForeignKey('Event.EID'))
-#     Message = Column(String(255), nullable=False)
-#     OrganizerOnly = Column(Boolean, default=False)
-#     event = relationship('Event', backref='notifications')
-#     participant = relationship('Participant', backref='notifications')
+class Notification(Base):
+    __tablename__ = 'Notification'
+    NID = Column(Integer, primary_key=True)
+    sender = Column(Integer, ForeignKey('Student.Roll'))
+    receiver = Column(Integer, ForeignKey('Student.Roll'))
+    message = Column(String(500), nullable=False)
+    time = Column(Date, nullable=False)
+    studentRecv = relationship('Student', foreign_keys=[receiver])
+    studentSend = relationship('Student', foreign_keys=[sender])
 
-#     def __init__(self, EID, Message, OrganizerOnly):
-#         self.EID = EID
-#         self.Message = Message
-#         self.OrganizerOnly = OrganizerOnly
+    def __init__(self, sender, receiver, message,time):
+        self.sender = sender
+        self.receiver = receiver
+        self.message = message
+        self.time = time
 
-#     def __repr__(self):
-#         return '<Notification %r>' % (self.NID)
-
+    def __repr__(self):
+        return '<Notification %r>' % (self.NID)
 
 # notificationTrigger = DDL("""
 #     CREATE TRIGGER notify

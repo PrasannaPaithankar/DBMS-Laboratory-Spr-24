@@ -30,6 +30,15 @@
       <div class="right">
         {% if user %}
         <ul>
+          {% if role %}
+            {% if role == 'organizer' %}
+            <li><a class="nav-item nav-link" id="Organize" href="/organizerPanel">Organize</a></li>
+            {% endif %}
+
+            {% if role == 'volunteer' %}
+            <li><a class="nav-item nav-link" id="Volunteer" href="/volunteerdashboard">Volunteer</a></li>
+            {% endif %}
+          {% endif %}
           <li><a class="nav-item nav-link" id="logout" href="/auth/logout">Logout</a></li>
           <li><a class="nav-item nav-link" id="logout" href="/profile">View Profile</a></li>
         </ul>

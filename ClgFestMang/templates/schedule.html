@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Events{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="text-center">Schedule</h1>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Event Name</th>
+                        <th>Event Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for event in events %}
+                    
+                    <tr>
+                        <td><a href="{{ url_for('event', EID=event.EID) }}">{{ event.EName }}</a>a></td>
+                        <td>{{ event.Date }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
