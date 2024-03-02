@@ -142,7 +142,7 @@ def forgotPassword():
                 database.db_session.commit()
 
                 subject = 'Password Reset for DBMSFest 2024'
-                body = f'Hello {user.Name},\n\nYour password has been reset for DBMSFest 2024.\n\nYour new password is: {password}\nEdit your password in Edit Profile\n\nRegards,\nDBMSFest 2024 Team.'
+                body = f'Hello {user.Name},\n\nYour password has been reset for DBMSFest 2024.\n\nYour new password is: {password}\nIt is recommended to edit your password in Edit Profile.\n\nRegards,\nDBMSFest 2024 Team.'
     
                 msg = Message(subject,
                                 sender=config['MAIL_USERNAME'],

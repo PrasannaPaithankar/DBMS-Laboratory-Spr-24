@@ -16,7 +16,7 @@
                     {% for event in events %}
                     
                     <tr>
-                        <td><a href="{{ url_for('event', EID=event.EID) }}">{{ event.EName }}</a>a></td>
+                        <td><a href="{{ url_for('event', EID=event.EID) }}">{{ event.EName }}</a></td>
                         <td>{{ event.Date }}</td>
                     </tr>
                     {% endfor %}
