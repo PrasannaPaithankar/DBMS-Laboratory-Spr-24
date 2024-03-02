@@ -43,7 +43,7 @@ def create_app():
     @app.route('/')
     def index():
         print(session)
-        if 'role' in session:
+        if 'user' in session:
             if session['role'] == 'external':
                 user = Participant.query.filter_by(
                     PID=session['user_id']).first()
@@ -128,21 +128,27 @@ def create_app():
         if request.method == 'POST':
             if request.form['formtype'] == 'mail':
                 subject = request.form['subject']
-                message = request.form['email']
+                message = request.form['message']
                 part_bool = request.form.get('participants', 0)
                 volu_bool = request.form.get('volunteers', 0)
 
                 organizer_id = session['user_id']
                 organizer = Organizer.query.filter_by(Roll=organizer_id).first()
-                if part_bool == 1:
-                    participants = Event_Participant.query.filter_by(
+                print(organizer.EID)
+                if part_bool == "1":
+                    event_participants = Event_Participant.query.filter_by(
                         EID=organizer.EID).all()
-                elif part_bool == 2:
+                    participants = []
+                    for event_participant in event_participants:
+                        participant = Participant.query.filter_by(
+                            PID=event_participant.PID).first()
+                        participants.append(participant)
+                elif part_bool == "2":
                     participants = request.form.getlist('participants')
                     for participant in participants:
                         participant = Participant.query.filter_by(
                             PID=participant).first()
-                if volu_bool == 1:
+                if volu_bool == "1":
                     volunteers = Volunteer.query.filter_by(EID=organizer.EID).all()
 
                     msg = Message(subject,
@@ -150,10 +156,11 @@ def create_app():
                                 recipients=[volunteers.email])
                     msg.body = message
                     auth.mail.send(msg)
-                if part_bool > 0:
+                if part_bool == "1" or part_bool == "2":
+                    print(participants)
                     msg = Message(subject,
                                 sender=app.config['MAIL_USERNAME'],
-                                recipients=[participants.email])
+                                recipients=[participant.email for participant in participants])
                     msg.body = message
                     auth.mail.send(msg)
                 flash('Emails sent successfully')
@@ -224,22 +231,26 @@ def create_app():
     @app.route('/search', methods=['GET', 'POST'])
     def search():
         if request.method == 'POST':
-            if 'role' in session:
-                if session['role'] == 'organizer':
-                    user = Organizer.query.filter_by(
-                        Roll=session['user_id']).first()
-                    query = request.form['query']
-                    events = Event.query.filter(Event.EName.ilike(
-                        f'%{query}%') | Event.Desc.ilike(f'%{query}%')).all()
-                    volunteers = Volunteer.query.filter(
-                        Volunteer.Name.ilike(f'%{query}%')).all()
-                    return render_template('search.html', events=events,
-                                           volunteers=volunteers, user=user)
-                else:
-                    query = request.form['query']
-                    events = Event.query.filter(Event.EName.ilike(
-                        f'%{query}%') | Event.Desc.ilike(f'%{query}%')).all()
-                    return render_template('search.html', events=events)
+            # if 'role' in session:
+            try:
+                session['role']
+            except KeyError:
+                session['role'] = 'user'
+            if session['role'] == 'organizer':
+                user = Organizer.query.filter_by(
+                    Roll=session['user_id']).first()
+                query = request.form['query']
+                events = Event.query.filter(Event.EName.ilike(
+                    f'%{query}%') | Event.Desc.ilike(f'%{query}%')).all()
+                volunteers = Volunteer.query.filter(
+                    Volunteer.Name.ilike(f'%{query}%')).all()
+                return render_template('search.html', events=events,
+                                        volunteers=volunteers, user=user, role=session['role'])
+            else:
+                query = request.form['query']
+                events = Event.query.filter(Event.EName.ilike(
+                    f'%{query}%') | Event.Desc.ilike(f'%{query}%')).all()
+                return render_template('search.html', events=events, role=session['role'])
         return render_template('search.html')
 
     @app.route('/profile', methods=['GET', 'POST'])

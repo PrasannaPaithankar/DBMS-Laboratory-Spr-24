@@ -64,11 +64,6 @@
                 <div class="input-box" id="dept" style="display: none">
                     <input type="text" class = "form-control" id="dept" name="dept" placeholder="Enter department"/>
                 </div>
-
-                <div class="input-box" id="interestVolunteer" style="display: none">
-                    <input type="checkbox" id="interestVolunteer" name="interestVolunteer" value="True">
-                    <label for="interestVolunteer">Interested in Volunteering</label>
-                </div>
                 
                 <div class="input-box" id="accommodation" style="display: none">
                     <select id="accommodation" name="accommodation">
@@ -93,7 +88,6 @@
                         document.getElementById("dept").style.display = "none";
                         document.getElementById("accommodation").style.display = "none";
                         document.getElementById("vegnonveg").style.display = "none";
-                        document.getElementById("interestVolunteer").style.display = "none";
             
                         if (role === "ExternalParticipant") {
                             document.getElementById("college").style.display = "block";
@@ -102,7 +96,6 @@
                         }
                         if (role === "Student") {
                             document.getElementById("dept").style.display = "block";
-                            document.getElementById("interestVolunteer").style.display = "block";
                         }
                     }
                 </script>

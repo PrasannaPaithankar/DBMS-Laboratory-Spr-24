@@ -21,6 +21,7 @@
 <body>
     <div class="container bg-white mt-5 mb-5">
         <div class="row">
+            {% block content %}
             <div class="col-md-4 border-right">
                 <div class="d-flex flex-column align-items-center text-center p-3 py-5"><img class="rounded-circle mt-5"
                         width="150px" src="../static/pr.jpeg"><span class="font-weight-bold font-large">{{ user.Name
@@ -64,13 +65,13 @@
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                         <div class="mt-5 text-center"><button class="btn btn-primary profile-button mx-4"
                                 type="submit">Edit Profile</button>
-                            <button class="btn btn-primary profile-button mx-4" type="button"
-                                onclick="goBack()">Close
+                            <button class="btn btn-primary profile-button mx-4" type="button" onclick="goBack()">Close
                                 Profile</button>
                         </div>
                     </form>
                 </div>
             </div>
+            {% endblock %}
         </div>
     </div>
     <script>

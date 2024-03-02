@@ -5,14 +5,14 @@
 {% block content %}
 <div class="container">
     <h1 class="mt-4 mb-4">Search Results</h1>
-    <form method="POST" >
+    <!-- <form method="POST" >
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
         <div class="form-group">
             <label for="query">Search:</label>
             <input type="text" class="form-control" id="query" name="query" placeholder="Enter your search query">
         </div>
         <button type="submit" class="btn btn-primary">Search</button>
-    </form>
+    </form> -->
 
     {% if events %}
     <h2>Events</h2>

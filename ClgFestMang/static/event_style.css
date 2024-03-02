@@ -1,0 +1,10 @@
+.container {
+  text-align: center; /* Horizontally aligns the content */
+  color: white; /* Sets the font color to white */
+}
+
+
+
+.row {
+  margin-bottom: 20px; /* Add space between rows */
+}

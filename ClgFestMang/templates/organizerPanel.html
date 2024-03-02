@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Organizer Panel{% endblock %}
+
+{% block content %}
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px; background: #f9f9f9; border-radius: 8px;">
+        <h1 style="text-align: center; margin-bottom: 20px;">Welcome, {{ user.student.Name }}</h1>
+
+        <h2>Your Events</h2>
+        <ul>
+            {% for event in events %}
+                <li style="margin-bottom: 15px;">
+                    <strong>Event Name:</strong> {{ event.EName }}<br>
+                    <strong>Date:</strong> {{ event.Date }}<br>
+                    <strong>Description:</strong> {{ event.Desc }}<br>
+                    <strong>Winners:</strong> {{ event.Winners }}<br>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <h2>Send Email</h2>
+        <form action="/organizerPanel" method="post" style="margin-bottom: 20px;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <input type="hidden" name="formtype" value="mail">
+
+            <label for="subject">Subject:</label><br>
+            <input type="text" id="subject" name="subject" required style="width: 100%; margin-bottom: 10px;"><br>
+
+            <label for="message">Message:</label><br>
+            <textarea id="message" name="message" rows="4" cols="50" required style="width: 100%; margin-bottom: 10px;"></textarea><br>
+
+            <input type="checkbox" id="participants" name="participants" value="1">
+            <label for="participants">Send to Participants</label><br>
+
+            <input type="checkbox" id="volunteers" name="volunteers" value="2">
+            <label for="volunteers">Send to Volunteers</label><br>
+
+            <button type="submit" style="background: #007bff; color: #fff; border: none; padding: 10px 20px; border-radius: 5px;">Send Email</button>
+        </form>
+
+        <h2>Select Winners</h2>
+        <form action="{{ url_for('organizerPanel') }}" method="post" style="margin-bottom: 20px;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="formtype" value="setWinner">
+            <label for="winner1">Winner 1:</label>
+            <input type="text" id="winner1" name="winner1" placeholder="Enter winner for position 1" required style="width: 100%; margin-bottom: 10px;"><br>
+
+            <label for="winner2">Winner 2:</label>
+            <input type="text" id="winner2" name="winner2" placeholder="Enter winner for position 2" required style="width: 100%; margin-bottom: 10px;"><br>
+
+            <label for="winner3">Winner 3:</label>
+            <input type="text" id="winner3" name="winner3" placeholder="Enter winner for position 3" required style="width: 100%; margin-bottom: 10px;"><br>
+
+            <button type="submit" style="background: #007bff; color: #fff; border: none; padding: 10px 20px; border-radius: 5px;">Set Winners</button>
+        </form>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul>
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+    </div>
+{% endblock %}

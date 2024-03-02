@@ -26,7 +26,6 @@ def register():
         accomodation = request.form['accommodation']
         vegnonveg = request.form['vegnonveg']
         dept = request.form['dept']
-        vol = request.form['interestVolunteer']
         if vegnonveg == "Veg":
             vegnonveg = False
         else:
@@ -47,44 +46,40 @@ def register():
             error = 'Passwords do not match.'
 
         if error is None:
-            # try:
-            if role == 'Student':
-                events = models.Event.query.all()
-                events = [event.EID for event in events]
-                if vol == "True":
+            try:
+                if role == 'Student':
                     user = models.Student(Name=username, email=email,
-                                            password=generate_password_hash(
-                                            password),
-                                            Dept=dept, RID=3, gender=gender)
-                    volunteer = models.Volunteer(Roll=user.Roll, EID=random.choice(events), password=user.password)
-                    database.db_session.add(volunteer)
-            elif role == 'ExternalParticipant':
-                accomodation = random.choice(
-                    ['Azad', 'Nehru', 'Patel', 'MS', 'HJB'])
-                if accomodation == "No":
-                    accomodation = None
-                user = models.Participant(Name=username, email=email,
-                                            password=generate_password_hash(
-                                            password),
-                                            CName=college,
-                                            accomodation=accomodation,
-                                            vegnonveg=vegnonveg,
-                                            gender=gender)
+                                                password=generate_password_hash(
+                                                password),
+                                                Dept=dept, RID=3, gender=gender)
 
-            database.db_session.add(user)
-            database.db_session.commit()
+                elif role == 'ExternalParticipant':
+                    accomodation = random.choice(
+                        ['Azad', 'Nehru', 'Patel', 'MS', 'HJB'])
+                    if accomodation == "No":
+                        accomodation = None
+                    user = models.Participant(Name=username, email=email,
+                                                password=generate_password_hash(
+                                                password),
+                                                CName=college,
+                                                accomodation=accomodation,
+                                                vegnonveg=vegnonveg,
+                                                gender=gender)
 
-            subject = 'Registration Successful for DBMSFest 2024'
-            body = f'Hello {username},\n\nYou have successfully registered for DBMSFest 2024.\n\nRegards,\nDBMSFest 2024 Team.'
-            msg = Message(subject,
-                            sender=config['MAIL_USERNAME'],
-                            recipients=[email])
-            msg.body = body
-            mail.send(msg)
-            flash('Successfully registered', 'success')
-            return redirect(url_for('auth.login'))
-            # except:
-            #     error = 'User {} is already registered.'.format(username)
+                database.db_session.add(user)
+                database.db_session.commit()
+
+                subject = 'Registration Successful for DBMSFest 2024'
+                body = f'Hello {username},\n\nYou have successfully registered for DBMSFest 2024.\n\nRegards,\nDBMSFest 2024 Team.'
+                msg = Message(subject,
+                                sender=config['MAIL_USERNAME'],
+                                recipients=[email])
+                msg.body = body
+                mail.send(msg)
+                flash('Successfully registered', 'success')
+                return redirect(url_for('auth.login'))
+            except:
+                error = 'User {} is already registered.'.format(username)
 
         flash(error)
 
@@ -101,8 +96,12 @@ def login():
         error = None
         if role == 'Student':
             user = models.Student.query.filter_by(Name=username).first()
+            if user is None:
+                user = models.Student.query.filter_by(email=username).first()
         elif role == 'ExternalParticipant':
             user =models.Participant.query.filter_by(Name=username).first()
+            if user is None:
+                user = models.Participant.query.filter_by(email=username).first()
 
         if user is None:
             error = 'Incorrect username.'
@@ -132,7 +131,8 @@ def edit_profile():
         error = None
         user_id = g.user
         user_role = g.role
-        username = None
+        user = None
+        email = ''
         if user_role == 'external':
             user = models.Participant.query.filter_by(PID=user_id).first()
             email = request.form['email']
@@ -146,9 +146,9 @@ def edit_profile():
                 vegnonveg = True
 
             try:
-                if email:
+                if email != '':
                     user.email = email
-                if password:
+                if password != '':
                     if password == confirm_password:
                         user.password = generate_password_hash(password)
                 if accomodation == "No":
@@ -156,7 +156,6 @@ def edit_profile():
                 if vegnonveg:
                     user.vegnonveg = vegnonveg
                 database.db_session.commit()
-                username = user.Name
             except:
                 error = 'Failed to update profile.'
                 flash(error)
@@ -167,13 +166,12 @@ def edit_profile():
             confirm_password = request.form['confirm_password']
 
             try:
-                if email:
+                if email != '':
                     user.email = email
-                if password:
+                if password != '':
                     if password == confirm_password:
                         user.password = generate_password_hash(password)
                 database.db_session.commit()
-                username = user.Name
             except:
                 error = 'Failed to update profile.'
                 flash(error)
@@ -181,7 +179,7 @@ def edit_profile():
         if error is None:
             try:
                 subject = 'Profile Updated for DBMSFest 2024'
-                body = f'Hello {username},\n\nYour profile has been successfully updated for DBMSFest 2024.\n\nRegards,\nDBMSFest 2024 Team.'
+                body = f'Hello {user.Name},\n\nYour profile has been successfully updated for DBMSFest 2024.\n\nRegards,\nDBMSFest 2024 Team.'
                 if email != '':
                     email = user.email
                 msg = Message(subject,
@@ -189,8 +187,7 @@ def edit_profile():
                                 recipients=[email])
                 msg.body = body
                 mail.send(msg)
-                flash('Profile updated successfully.')
-                username = user.Name
+                flash('Profile updated successfully.', 'success')
             except:
                 error = 'Failed to update profile.'
                 flash(error)
@@ -202,20 +199,10 @@ def edit_profile():
 
 @bp.before_app_request
 def load_logged_in_user():
-    try:
-        session['user_id']
-        session['role']
-    except KeyError:
-        session.permanent = True
-        session['user_id'] = None
-        session['role'] = None
-        return redirect(url_for('index'))
-    
-    session.permanent = True
     user_id = session.get('user_id')
     user_role = session.get('role')
 
-    if user_role is None:
+    if (user_role is None) or (user_id is None):
         g.user = None
         g.role = None
     elif user_role == 'external':

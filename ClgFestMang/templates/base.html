@@ -24,6 +24,7 @@
       <div class="left">
         <ul>
           <li><a class="nav-item nav-link" id="home" href="/">Home</a></li>
+          <li><a class="nav-item nav-link" id="events" href="/events">Events</a></li>
         </ul>
       </div>
       <div class="right">
@@ -38,31 +39,48 @@
           <li><a class="nav-item nav-link" id="signUp" href="/auth/register">Register</a></li>
         </ul>
         {% endif %}
+        <form method = "POST" action = "/search" class = "search-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <div class="form-group">
+              <input type="text" class="form-control" id="query" name="query" placeholder="Search Events">
+          </div>
+       </form>
       </div>
     </nav>
   </section>
-  {% with messages = get_flashed_messages(with_categories=true) %} {% if
-  messages %} {% for category, message in messages %} {% if category ==
-  'error' %}
-  <div class="alert alert-danger alter-dismissable fade show" role="alert">
-    {{ message }}
-    <button type="button" class="close" data-dismiss="alert">
-      <span aria-hidden="true">&times;</span>
-    </button>
+
+  <div class="message mx-auto" style="max-width: 30%; margin-top: 80px;">
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %} {% if category ==
+      'error' %}
+      <div class="alert alert-danger alter-dismissable fade show" role="alert">
+        {{ message }}
+        <button type="button" class="close" data-dismiss="alert">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      {% else %}
+      <div class="alert alert-success alter-dismissable fade show" role="alert">
+        {{ message }}
+        <button type="button" class="close" data-dismiss="alert">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      {% endif %} {% endfor %} {% endif %} {% endwith %}
   </div>
-  {% else %}
-  <div class="alert alert-success alter-dismissable fade show" role="alert">
-    {{ message }}
-    <button type="button" class="close" data-dismiss="alert">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  {% endif %} {% endfor %} {% endif %} {% endwith %}
   <div class="container">
     {% block content %}{% endblock %}
   </div>
 
-
+  <script>
+    function searchOnEnter(event) {
+      if (event.key === "Enter") {
+        event.preventDefault(); // Prevent form submission
+        event.target.closest("form").submit(); // Submit the form
+      }
+    }
+  </script>  
+  
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
     integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
     crossorigin="anonymous"></script>
