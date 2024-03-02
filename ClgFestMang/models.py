@@ -13,9 +13,9 @@ class Event(Base):
     EName = Column(String(255), nullable=False)
     Date = Column(Date, nullable=False)
     Desc = Column(String(255))
-    Winners1 = Column(String(255))
-    Winners2 = Column(String(255))
-    Winners3 = Column(String(255))
+    Winner1 = Column(String(255))
+    Winner2 = Column(String(255))
+    Winner3 = Column(String(255))
 
     def __init__(self, EName, Date, Desc, Winner1, Winner2, Winner3):
         self.EName = EName
