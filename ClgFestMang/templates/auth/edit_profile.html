@@ -18,7 +18,7 @@
         {% if role == "external" %}
         <div class="input-box" id="accommodation">
             <select id="accommodation" name="accommodation">
-                <option value="None">Edit accomodation</option>
+                <option value="None">Edit accommodation</option>
                 <option value="Yes">Yes</option>
                 <option value="No">No</option>
             </select>
@@ -56,7 +56,7 @@
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
         <button type="submit" class="btn">Save changes</button>
         <div class="register-link">
-            <p><a href="javascript:history.back()">Go Back</a></p>
+            <p><a href="{{ url_for('profile') }}">Go Back</a></p>
         </div>
     </form>
 </div>
