@@ -129,6 +129,7 @@ def login():
 def edit_profile():
     if request.method == 'POST':
         error = None
+        
         user_id = g.user
         user_role = g.role
         user = None
@@ -140,21 +141,27 @@ def edit_profile():
             confirm_password = request.form['confirm_password']
             accomodation = request.form['accommodation']
             vegnonveg = request.form['vegnonveg']
-            if vegnonveg == "Veg":
+
+            if vegnonveg == "False":
                 vegnonveg = False
             else:
                 vegnonveg = True
 
-            try:
+            try :
                 if email != '':
                     user.email = email
                 if password != '':
                     if password == confirm_password:
                         user.password = generate_password_hash(password)
                 if accomodation == "No":
-                    user.accomodation = None
-                if vegnonveg:
-                    user.vegnonveg = vegnonveg
+                    user.accomodation = "No"   
+                else:
+                    user.accomodation = random.choice(
+                        ['Azad', 'Nehru', 'Patel', 'MS', 'HJB','RP','LLR','SNIG','MAIN BUILDING'])   
+                if password != confirm_password:
+                    error = 'Passwords do not match.'
+                    flash(error)
+                user.vegnonveg = vegnonveg
                 database.db_session.commit()
             except:
                 error = 'Failed to update profile.'
