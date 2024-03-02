@@ -134,14 +134,12 @@ class Volunteer(Base):
     Roll = Column(Integer, ForeignKey(
         'Student.Roll'), primary_key=True)
     EID = Column(Integer, ForeignKey('Event.EID'), primary_key=True)
-    password = Column(String(255), nullable=False)
     student = relationship('Student', backref='volunteers')
     event = relationship('Event', backref='volunteers')
 
-    def __init__(self, Roll, EID, password):
+    def __init__(self, Roll, EID):
         self.Roll = Roll
         self.EID = EID
-        self.password = password
 
     def __repr__(self):
         return '<Volunteer %r>' % (self.Roll)
@@ -153,15 +151,13 @@ class Organizer(Base):
         'Student.Roll'), primary_key=True)
     EID = Column(Integer, ForeignKey('Event.EID'), primary_key=True)
     email = Column(String(255), nullable=False)
-    password = Column(String(255), nullable=False)
     student = relationship('Student', backref='organizers')
     event = relationship('Event', backref='organizers')
 
-    def __init__(self, Roll, EID, email, password):
+    def __init__(self, Roll, EID, email):
         self.Roll = Roll
         self.EID = EID
         self.email = email
-        self.password = password
 
     def __repr__(self):
         return '<Organizer %r>' % (self.Roll)
