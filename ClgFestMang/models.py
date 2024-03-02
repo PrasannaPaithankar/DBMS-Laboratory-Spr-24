@@ -163,6 +163,25 @@ class Organizer(Base):
         return '<Organizer %r>' % (self.Roll)
 
 
+class Notification(Base):
+    __tablename__ = 'Notification'
+    NID = Column(Integer, primary_key=True)
+    sender = Column(Integer, ForeignKey('Student.Roll'))
+    receiver = Column(Integer, ForeignKey('Student.Roll'))
+    message = Column(String(500), nullable=False)
+    time = Column(Date, nullable=False)
+    studentRecv = relationship('Student', foreign_keys=[receiver])
+    studentSend = relationship('Student', foreign_keys=[sender])
+
+    def __init__(self, sender, receiver, message,time):
+        self.sender = sender
+        self.receiver = receiver
+        self.message = message
+        self.time = time
+
+    def __repr__(self):
+        return '<Notification %r>' % (self.NID)
+
 # class Notification(Base):
 #     __tablename__ = 'Notification'
 #     NID = Column(Integer, primary_key=True)

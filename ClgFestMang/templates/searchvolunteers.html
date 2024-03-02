@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<div class="container">
+    <div class="mb-3 ">
+        <input type="text" class="form-control" placeholder="Search by name" id="searchInput">
+    </div>
+
+    <div class="row" id="volunteersContainer">
+        {% for volunteer in volunteers %}
+            <div class="col-md-12 mb-6">
+                <div class="card">
+                    <div class="card-body bg-white" style="color: rgb(129, 129, 101);">
+                        <h5 class="card-title">{{ volunteer.Name|capitalize }} (ID: {{ volunteer.Roll }})</h5>
+                        <p class="card-text">{{ volunteer.EName }}</p>
+                        <p class="card-text">{{ volunteer.Email }}</p>
+                        <a href="{{ url_for('sendnotficationvolunteer', volunteers=volunteer) }}" class="btn btn-primary">Send message</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Listen for input in the search bar
+        $('#searchInput').on('input', function() {
+            // Get the search query
+            var searchQuery = $(this).val().toLowerCase();
+
+            // Filter the volunteers based on the search query
+            $('#volunteersContainer .card').each(function() {
+                var volunteerName = $(this).find('.card-title').text().toLowerCase();
+
+                // Show/hide the card based on the search query
+                if (volunteerName.includes(searchQuery)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}

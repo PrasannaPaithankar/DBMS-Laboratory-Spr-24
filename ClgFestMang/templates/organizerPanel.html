@@ -13,7 +13,9 @@
                     <strong>Event Name:</strong> {{ event.EName }}<br>
                     <strong>Date:</strong> {{ event.Date }}<br>
                     <strong>Description:</strong> {{ event.Desc }}<br>
-                    <strong>Winners:</strong> {{ event.Winners }}<br>
+                    <strong>Winner 1:</strong> {{ event.Winner1 }}<br>
+                    <strong>Winner 2:</strong> {{ event.Winner2 }}<br>
+                    <strong>Winner 3:</strong> {{ event.Winner3 }}<br>
                 </li>
             {% endfor %}
         </ul>
@@ -43,6 +45,7 @@
         <form action="{{ url_for('organizerPanel') }}" method="post" style="margin-bottom: 20px;">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <input type="hidden" name="formtype" value="setWinner">
+
             <label for="winner1">Winner 1:</label>
             <input type="text" id="winner1" name="winner1" placeholder="Enter winner for position 1" required style="width: 100%; margin-bottom: 10px;"><br>
 
@@ -64,5 +67,8 @@
                 </ul>
             {% endif %}
         {% endwith %}
+
+        <h2><a href = "/sendnotification">SEND NOTIFICATIONS</a></h2>
+        <h2><a href = "/searchvolunteers">Search Volunteers</a>
     </div>
 {% endblock %}

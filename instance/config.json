@@ -1,5 +1,5 @@
 {
-    "SQLALCHEMY_DATABASE_URI": "postgresql://prasanna:prasanna@localhost/clgfestmang",
+    "SQLALCHEMY_DATABASE_URI": "postgresql://harsh:harsh@localhost/clgfestmang",
     "SQLALCHEMY_TRACK_MODIFICATIONS": false,
     "SQLALCHEMY_ECHO": true,
     "SESSION_TYPE": "filesystem",
