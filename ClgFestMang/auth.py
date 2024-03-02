@@ -210,8 +210,9 @@ def load_logged_in_user():
         g.role = 'external'
     else:
         user = models.Student.query.filter_by(Roll=user_id).first()
-        g.user = user.Roll
-        g.role = user.role.Rname
+        if user is not None:
+            g.user = user.Roll
+            g.role = user.role.Rname
 
     end = request.endpoint
     if end is not None:

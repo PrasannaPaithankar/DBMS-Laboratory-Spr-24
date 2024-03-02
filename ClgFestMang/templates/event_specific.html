@@ -6,9 +6,9 @@
       class="img-thumbnail mt-5 mb-5 w-100 h-100" width="150px" src="../static/event.avif">
     <span class="font-weight-bold font-large">{{ event.EName
       }}</span>
-      <span class="text-black-50">
-        DBMS Fest 2024
-      </span>
+    <span class="text-black-50">
+      DBMS Fest 2024
+    </span>
   </div>
 </div>
 <div class="col-md-8">
@@ -31,13 +31,16 @@
         <form method="POST">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
           {% if user %}
-          {% if user.role == 'external' %}
-          <input type="hidden" name="role" value="external">
-          {% else %}
-          <input type="hidden" name="role" value="student">
+            {% if role == 'external' %}
+            <input type="hidden" name="role" value="external">
+            <button type="submit" class="btn btn-primary">Register as participant</button>
+            {% elif role == 'user' %}
+            <input type="hidden" name="role" value="student">
+            <button type="submit" class="btn btn-primary">Register as participant</button>
+            <input type="hidden" name="role" value="volunteer">
+            <button type="submit" class="btn btn-primary">Register as volunteer</button>
+            {% endif %}
           {% endif %}
-          {% endif %}
-          <button type="submit" class="btn btn-primary">Register</button>
         </form>
       </div>
     </div>

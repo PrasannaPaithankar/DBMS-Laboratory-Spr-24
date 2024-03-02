@@ -69,10 +69,23 @@ def create_app():
 
                     return render_template('events.html', events=events,
                                            other_events=other_events, user=user, role=session['role'])
-            else:
+            elif session['role'] == 'user':
                 user = Student.query.filter_by(Roll=session['user_id']).first()
                 if user is not None:
                     events = Student_Event.query.filter_by(
+                        Roll=user.Roll).all()
+                    events = [Event.query.filter_by(
+                        EID=event.EID).first() for event in events]
+                    other_events = Event.query.filter(
+                        Event.EID.notin_([event.EID for event in events])).all()
+
+                    return render_template('events.html', events=events,
+                                           other_events=other_events, user=user, role=session['role'])
+            elif session['role'] == 'volunteer':
+                user = Student.query.filter_by(
+                    Roll=session['user_id']).first()
+                if user is not None:
+                    events = Volunteer.query.filter_by(
                         Roll=user.Roll).all()
                     events = [Event.query.filter_by(
                         EID=event.EID).first() for event in events]
@@ -88,6 +101,7 @@ def create_app():
     @app.route('/event/<int:EID>', methods=['GET', 'POST'])
     def event(EID):
         event = Event.query.filter_by(EID=EID).first()
+        
         if 'role' in session:
             if session['role'] == 'external':
                 user = Participant.query.filter_by(
@@ -100,12 +114,12 @@ def create_app():
                         db_session.add(event_participant)
                         db_session.commit()
                         return redirect(url_for('events'))
-                    db_session.add(event_participant)
+                    db_session.add(student_event)
                     db_session.commit()
                     return redirect(url_for('events'))
                 return render_template('event_specific.html',
-                                       event=event, user=user)
-            else:
+                                       event=event, user=user, role=session['role'])
+            elif session['role'] == 'user':
                 user = Student.query.filter_by(Roll=session['user_id']).first()
                 if request.method == 'POST':
                     student_event = Student_Event(
@@ -119,7 +133,21 @@ def create_app():
                     db_session.commit()
                     return redirect(url_for('events'))
                 return render_template('event_specific.html',
-                                       event=event, user=user)
+                                       event=event, user=user, role = session['role'])
+            elif session['role'] == 'volunteer':
+                user = Student.query.filter_by(
+                    Roll=session['user_id']).first()
+                if request.method == 'POST':
+                    volunteer = Volunteer(Roll=user.Roll, EID=EID)
+                    if Volunteer.query.filter_by(Roll=user.Roll, EID=EID).first() is not None:
+                        db_session.add(volunteer)
+                        db_session.commit()
+                        return redirect(url_for('events'))
+                    db_session.add(volunteer)
+                    db_session.commit()
+                    return redirect(url_for('events'))
+                return render_template('event_specific.html', event=event, user = user, role=session['role'])
+                
         return render_template('event_specific.html', event=event)
 
     @app.route('/organizerPanel', methods=['GET', 'POST'])
