@@ -4,6 +4,8 @@ from sqlalchemy import (DDL, Boolean, Column, Date, ForeignKey, Integer,
 from sqlalchemy.orm import relationship
 
 from .database import Base
+from sqlalchemy.exc import IntegrityError
+from datetime import datetime
 
 
 class Event(Base):
@@ -13,6 +15,8 @@ class Event(Base):
     EName = Column(String(255), nullable=False)
     Date = Column(Date, nullable=False)
     Desc = Column(String(255))
+    Venue = Column(String(255))
+    Sponsor = Column(String(255))
     Winner1 = Column(String(255))
     Winner2 = Column(String(255))
     Winner3 = Column(String(255))
@@ -196,10 +200,66 @@ class food(Base):
         return '<food %r>' % (self.Name)
 
 
-# notificationTrigger = DDL("""
-#     CREATE TRIGGER notify
-#     AFTER INSERT ON "Notification"
-#     FOR EACH ROW
-#     EXECUTE PROCEDURE notify_trigger();
-# """)
-# event.listen(Notification.__table__, 'after_create', notificationTrigger)
+# Define the trigger function logic
+def modifyfood_listener(mapper, connection, target):
+    # Check if the trigger event is an INSERT
+    if connection.dialect.name == 'postgresql':
+        print("Trigger event is an INSERT")
+        # Perform the desired actions (e.g., modify the data)
+        existing_food = connection.execute(
+            food.__table__.select().where(food.Name == target.Name)
+        ).fetchone()
+
+        if existing_food:
+            connection.execute(
+                food.__table__.update().
+                where(food.Name == target.Name).
+                values(type=target.type, detail=target.detail)
+            )
+
+# Attach the trigger function to the food model
+event.listen(food, 'before_insert', modifyfood_listener)
+
+# You can add the DDL to create the trigger directly in Python
+trigger_ddl = DDL("""
+CREATE OR REPLACE FUNCTION modifyfood_trigger()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        UPDATE food
+        SET type = NEW.type,
+            detail = NEW.detail
+        WHERE Name = NEW.Name;
+
+        RETURN NEW;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+""")
+
+event.listen(food.__table__, 'after_create', trigger_ddl)
+
+
+# Define the trigger function logic
+def notification_trigger_listener(mapper, connection, target):
+    # Check if the trigger event is an INSERT
+    if connection.dialect.name == 'postgresql':
+        target.time = datetime.now().date()  # Set the time to the current date
+
+        # Additional actions or validations
+        try:
+            sender_student = connection.execute(Student.__table__.select().where(Student.Roll == target.sender)).fetchone()
+            receiver_student = connection.execute(Student.__table__.select().where(Student.Roll == target.receiver)).fetchone()
+
+            if not sender_student or not receiver_student:
+                # Rollback the transaction if either sender or receiver doesn't exist
+                raise IntegrityError(None, None, None)
+
+        except IntegrityError:
+            # Handle the case where sender or receiver doesn't exist
+            raise ValueError('Invalid sender or receiver')
+
+# Attach the trigger function to the Notification model
+event.listen(Notification, 'before_insert', notification_trigger_listener)
