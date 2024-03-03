@@ -7,10 +7,10 @@
         <div class="row justify-content-center">
             <div class="col-md-12" >
                 <div class="card mt-5" style="background-color: rgba(76, 139, 182, 0.3);">
-                    <div class="card-body" style="width: 430px;">
+                    <div class="card-body" style="width: 100%;">
                         <h1 class="card-title text-center mb-4">Welcome, {{ user.student.Name }}</h1>
 
-                        <h2>Your Events</h2>
+                        <h2>Your Event</h2>
                         <ul class="list-group mb-4">
                             {% for event in events %}
                                 <li class="list-group-item">
@@ -81,7 +81,7 @@
                             <h2><a href="/searchvolunteers" class="btn btn-primary btn-block">Search Volunteers</a></h2>
                         </div>
                         
-                        <div class="card mb-4" style="width: 380px; height: 40px;">
+                        <div class="card mb-4" style="width: 380px; height: 40px;  background-color: #acc2d6;">
                             <h2><a href="/modifyfood" class="btn btn-primary btn-block">ADD FOOD</a></h2>
                         </div>
                         {% with messages = get_flashed_messages() %}
