@@ -1,11 +1,11 @@
-# models.py for the ClgFestMang app, the database connects to postgresql and the models are defined here
+from datetime import datetime
+
 from sqlalchemy import (DDL, Boolean, Column, Date, ForeignKey, Integer,
                         String, event)
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import relationship
 
 from .database import Base
-from sqlalchemy.exc import IntegrityError
-from datetime import datetime
 
 
 class Event(Base):
@@ -21,7 +21,8 @@ class Event(Base):
     Winner2 = Column(String(255))
     Winner3 = Column(String(255))
 
-    def __init__(self, EName, Date, Desc, Winner1, Winner2, Winner3, Venue, Sponsor):
+    def __init__(self, EName, Date, Desc,
+                 Winner1, Winner2, Winner3, Venue, Sponsor):
         self.EName = EName
         self.Date = Date
         self.Desc = Desc
@@ -48,7 +49,8 @@ class Participant(Base):
     password = Column(String(255), nullable=False)
     gender = Column(String(1), nullable=False)
 
-    def __init__(self, Name, email, accomodation, vegnonveg, CName, password, gender, username):
+    def __init__(self, Name, email, accomodation, vegnonveg,
+                 CName, password, gender, username):
         self.Name = Name
         self.email = email
         self.accomodation = accomodation
@@ -181,7 +183,7 @@ class Notification(Base):
     studentRecv = relationship('Student', foreign_keys=[receiver])
     studentSend = relationship('Student', foreign_keys=[sender])
 
-    def __init__(self, sender, receiver, message,time):
+    def __init__(self, sender, receiver, message, time):
         self.sender = sender
         self.receiver = receiver
         self.message = message
@@ -224,10 +226,9 @@ def modifyfood_listener(mapper, connection, target):
                 values(type=target.type, detail=target.detail)
             )
 
-# Attach the trigger function to the food model
+
 event.listen(food, 'before_insert', modifyfood_listener)
 
-# You can add the DDL to create the trigger directly in Python
 trigger_ddl = DDL("""
 CREATE OR REPLACE FUNCTION modifyfood_trigger()
 RETURNS TRIGGER AS $$
@@ -247,24 +248,21 @@ $$ LANGUAGE plpgsql;
 event.listen(food.__table__, 'after_create', trigger_ddl)
 
 
-# Define the trigger function logic
 def notification_trigger_listener(mapper, connection, target):
-    # Check if the trigger event is an INSERT
     if connection.dialect.name == 'postgresql':
-        target.time = datetime.now().date()  # Set the time to the current date
+        target.time = datetime.now().date()
 
-        # Additional actions or validations
         try:
-            sender_student = connection.execute(Student.__table__.select().where(Student.Roll == target.sender)).fetchone()
-            receiver_student = connection.execute(Student.__table__.select().where(Student.Roll == target.receiver)).fetchone()
+            sender_student = connection.execute(
+                Student.__table__.select().where(Student.Roll == target.sender)).fetchone()
+            receiver_student = connection.execute(
+                Student.__table__.select().where(Student.Roll == target.receiver)).fetchone()
 
             if not sender_student or not receiver_student:
-                # Rollback the transaction if either sender or receiver doesn't exist
                 raise IntegrityError(None, None, None)
 
         except IntegrityError:
-            # Handle the case where sender or receiver doesn't exist
             raise ValueError('Invalid sender or receiver')
 
-# Attach the trigger function to the Notification model
+
 event.listen(Notification, 'before_insert', notification_trigger_listener)
