@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Food{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h2 class="text-center mb-4">Food Menu</h2>
+
+        <div class="row">
+            {% if foodtype %}
+                {% for food in foods %}
+                    <div class="col-md-4 mb-2">
+                        <div class="card text-white bg-primary w-75 mx-auto" style="background-image: linear-gradient(to bottom right, rgb(126, 145, 172), #15486D);">
+                            <div class="card-header">{{food.Name}}</div>
+                            <div class="card-body">
+                                <p class="card-text">{{food.detail}}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+            {% for food in foods %}
+            <div class="col-md-4 mb-2">
+                <div class="card text-white bg-secondary w-75 mx-auto">
+                    <div class="card-header">{{food.name}}</div>
+                    <div class="card-body">
+                        <p class="card-text">{{food.detail}}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

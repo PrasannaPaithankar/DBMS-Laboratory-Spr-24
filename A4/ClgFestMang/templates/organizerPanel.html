@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Organizer Panel{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-12" >
+                <div class="card mt-5" style="background-color: rgba(76, 139, 182, 0.3);">
+                    <div class="card-body" style="width: 100%;">
+                        <h1 class="card-title text-center mb-4">Welcome, {{ user.student.Name }}</h1>
+
+                        <h2>Your Event</h2>
+                        <ul class="list-group mb-4">
+                            {% for event in events %}
+                                <li class="list-group-item">
+                                    <strong>Event Name:</strong> {{ event.EName }}<br>
+                                    <strong>Date:</strong> {{ event.Date }}<br>
+                                    <strong>Description:</strong> {{ event.Desc }}<br>
+                                    <strong>Winner 1:</strong> {{ event.Winner1 }}<br>
+                                    <strong>Winner 2:</strong> {{ event.Winner2 }}<br>
+                                    <strong>Winner 3:</strong> {{ event.Winner3 }}<br>
+                                </li>
+                            {% endfor %}
+                        </ul>
+
+                        <div class="card mb-4" style="width: 380px;">
+                            <div class="card-body mx-auto">
+                                <h2 class="card-title text-center mb-4">Send Email</h2>
+                                <form action="/organizerPanel" method="post">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="formtype" value="mail">
+                                    <div class="form-group">
+                                        <label for="subject">Subject:</label>
+                                        <input type="text" id="subject" name="subject" class="form-control" required style="width: 100%;">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="message">Message:</label>
+                                        <textarea id="message" name="message" class="form-control" rows="4" required style="width: 100%;"></textarea>
+                                    </div>
+                                    <div class="form-group form-check">
+                                        <input type="checkbox" id="participants" name="participants" value="1" class="form-check-input">
+                                        <label for="participants" class="form-check-label">Send to Participants</label>
+                                    </div>
+                                    <div class="form-group form-check">
+                                        <input type="checkbox" id="volunteers" name="volunteers" value="2" class="form-check-input">
+                                        <label for="volunteers" class="form-check-label">Send to Volunteers</label>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Send Email</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="card mb-4" style="width: 380px;">
+                            <div class="card-body mx-auto">
+                                <h2 class="card-title text-center mb-4">Select Winners</h2>
+                                <form action="{{ url_for('organizerPanel') }}" method="post">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="formtype" value="setWinner">
+                                    <div class="form-group">
+                                        <label for="winner1">Winner 1:</label>
+                                        <input type="text" id="winner1" name="winner1" class="form-control" placeholder="Enter winner for position 1" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="winner2">Winner 2:</label>
+                                        <input type="text" id="winner2" name="winner2" class="form-control" placeholder="Enter winner for position 2" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="winner3">Winner 3:</label>
+                                        <input type="text" id="winner3" name="winner3" class="form-control" placeholder="Enter winner for position 3" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Set Winners</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="card mb-4" style="width: 380px; height: 40px;">
+                            <h2><a href="/sendnotification" class="btn btn-primary btn-block">SEND NOTIFICATIONS</a></h2>
+                        </div>
+                        
+                        <div class="card mb-4" style="width: 380px; height: 40px;">
+                            <h2><a href="/searchvolunteers" class="btn btn-primary btn-block">Search Volunteers</a></h2>
+                        </div>
+                        
+                        <div class="card mb-4" style="width: 380px; height: 40px;  background-color: #acc2d6;">
+                            <h2><a href="/modifyfood" class="btn btn-primary btn-block">ADD FOOD</a></h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

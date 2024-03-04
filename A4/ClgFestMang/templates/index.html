@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+{% if logout_message %}
+        <p class="logout-message">{{ logout_message }}</p>
+    {% endif %}
+
+    <div class="vertical-center">
+        <div class="centered-container">
+            <h1 class="main-heading" id="welcome-heading"></h1>
+            <h2 class="sub-heading" id="fest-heading"></h2>
+
+            <br><br>
+            <!-- Additional Content for the Home Page -->
+            <section class="event-highlights">
+                <p class="section-content">Explore the latest in technology and innovation at TECHNO HEIST. Join us for exciting events, workshops, and more!</p>
+            </section>
+
+            <section class="get-involved">
+                <p class="section-content">Be a part of the TECH community! Join us as a participant or volunteer to make TECHNO HEIST a success.</p>
+            </section>
+        </div>
+    </div>
+
+    <!-- JavaScript for Animated Text -->
+    <script>
+        const welcomeHeading = document.getElementById('welcome-heading');
+        const festHeading = document.getElementById('fest-heading');
+        const welcomeText = "Welcome to TECHNO HEIST !!!";
+        const festText = "Largest Tech Fest in India";
+        const loopDelay = 2000; // Adjust the delay between loops in milliseconds
+
+        function animateText(element, text) {
+            element.innerHTML = '';
+            let i = 0;
+
+            function displayText() {
+                if (i < text.length) {
+                    const span = document.createElement('span');
+                    span.textContent = text.charAt(i);
+                    element.appendChild(span);
+                    i++;
+                    setTimeout(displayText, 100); // Adjust the delay between characters in milliseconds
+                } else {
+                    setTimeout(() => {
+                        animateText(element, text); // Loop after a delay
+                    }, loopDelay);
+                }
+            }
+
+            displayText();
+        }
+
+        // Animate Welcome heading
+        animateText(welcomeHeading, welcomeText);
+
+        // Animate Fest heading after a delay
+        setTimeout(() => {
+            animateText(festHeading, festText);
+        }, welcomeText.length * 100 + loopDelay); // Delay the start of the fest heading animation
+    </script>
+
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .vertical-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 50vh; /* Adjust the height to your preference */
+        }
+
+        .centered-container {
+            text-align: center;
+            font-size: large;
+        }
+
+        .main-heading {
+            font-size: 40px; /* Increase the font size for an elegant look */
+            color: #7cb6c5; /* Choose an elegant color */
+            font-weight: 500px; /* Use a bold font weight for emphasis */
+            margin-top: 0;
+            letter-spacing: 1px; /* Adjust the letter spacing to your preference */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Add a subtle text shadow for depth */
+            transition: color 0.3s ease-in-out; /* Add a smooth color transition effect */
+        }
+
+        .sub-heading {
+            font-size: 30px;
+            color: #fdf6f6; /* Adjust the color to your preference */
+            font-weight: 400px;
+            margin-top: 0;
+            letter-spacing: 1px; /* Adjust the letter spacing to your preference */
+        }
+
+        .main-heading:hover {
+            color: #f1e9e9; /* Change color on hover for a dynamic effect */
+        }
+
+        /* Add more styles as needed */
+    </style>
+{% endblock %}
+

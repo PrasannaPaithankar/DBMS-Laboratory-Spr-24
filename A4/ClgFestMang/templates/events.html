@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Events{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="check">
+            <label for="showEventsCheckbox" class="checkbox">
+                <input type="checkbox" id="showEventsCheckbox"> Show Your Events
+            </label>
+        </div>
+    </div>
+    <div class="row" id="yourEventsSection" style="display: none;">
+        <h2>Your Events</h2>
+        <ul class="list-group" id="yourEventsList">
+            {% for event in events %}
+            <div class="card">
+                <li class="list-group-item name">
+                    <a class="nav-item nav-link" href="{{ url_for('event', EID=event.EID) }}">{{ event.EName }}</a>
+                </li>
+                <li class="list-group-item">
+                    {{ event.Date }}
+                </li>
+            </div>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="row">
+        <h2>Unregistered Events</h2>
+        <ul class="list-group">
+            {% for event in other_events %}
+            <div class="card">
+                <li class="list-group-item">
+                    <a class="nav-item nav-link" href="{{ url_for('event', EID=event.EID) }}">{{ event.EName }}</a>
+                </li>
+                <li class="list-group-item">
+                    {{ event.Date }}
+                </li>
+            </div>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var showEventsCheckbox = document.getElementById('showEventsCheckbox');
+        var otherEventsSection = document.querySelector('.row:last-child'); // Selecting the last row
+        var yourEventsSection = document.getElementById('yourEventsSection');
+
+        showEventsCheckbox.addEventListener('change', function () {
+            if (showEventsCheckbox.checked) {
+                otherEventsSection.style.display = 'none';
+                yourEventsSection.style.display = 'block';
+            } else {
+                otherEventsSection.style.display = 'block';
+                yourEventsSection.style.display = 'none';
+            }
+        });
+
+        // Trigger the change event initially to show/hide the section based on default checkbox state
+        if (showEventsCheckbox.checked) {
+            otherEventsSection.style.display = 'none';
+            yourEventsSection.style.display = 'block';
+        } else {
+            otherEventsSection.style.display = 'block';
+            yourEventsSection.style.display = 'none';
+        }
+    });
+</script>
+
+{% endblock %}

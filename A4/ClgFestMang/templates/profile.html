@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        crossorigin="anonymous" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../static/prof_style.css">
+
+    <title>{% block title %}Profile{% endblock %}</title>
+</head>
+
+<body>
+    <div class="container bg-white mt-5 mb-5">
+        <div class="row">
+            {% block content %}
+            <div class="col-md-4 border-right">
+                <div class="d-flex flex-column align-items-center text-center p-3 py-5"><img class="rounded-circle mt-5"
+                        width="150px" src="../static/pr.jpeg"><span class="font-weight-bold font-large">{{ user.Name
+                        }}</span><span class="text-black-50">
+                        {% if role == 'external' %}
+                        External Participant
+                        {% elif role == 'user'%}
+                        Student
+                        {% elif role == 'volunteer'%}
+                        Volunteer
+                        {% elif role == 'admin'%}
+                        Admin
+                        {% elif role == 'organizer'%}
+                        Organizer
+                        {% endif %}
+                    </span><span>
+                    </span></div>
+            </div>
+            <div class="col-md-8">
+                <div class="p-3 py-5">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="text-right">Profile Information</h4>
+                    </div>
+                    <div class="row mt-2">
+                        {% if role == 'external' %}
+                        <div class="col-md-12"><strong>NAME:</strong> {{ user.username }}</div>
+                        <div class="col-md-12"><strong>ID:</strong> {{ user.PID }}</div>
+                        <div class="col-md-12"><strong>Email:</strong> {{ user.email }}</div>
+                        <div class="col-md-12"><strong>College: </strong> {{ user.CName }}</div>
+                        <div class="col-md-12"><strong>Accomodation: </strong> {{ user.accomodation }}</div>
+                        {% if user.vegnonveg == False %}
+                        <div class="col-md-12"><strong>Food Preference: </strong> Vegetarian</div>
+                        {% else %}
+                        <div class="col-md-12"><strong>Food Preference: </strong> Non-Vegetarian</div>
+                        {% endif %}
+                        {% else %}
+                        <div class="col-md-12"><strong>NAME:</strong> {{ user.username }}</div>
+                        <div class="col-md-12"><strong>ID:</strong> {{ user.Roll }}</div>
+                        <div class="col-md-12"><strong>Email:</strong> {{ user.email }}</div>
+                        <div class="col-md-12"><strong>Department:</strong> {{ user.Dept }}</div>
+                        {% endif %}
+                        <div class="col-md-12"><strong>Gender:</strong> {{ user.gender }}</div>
+                    </div>
+                    <form method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                        <div class="mt-5 text-center"><button class="btn btn-primary profile-button mx-4"
+                                type="submit">Edit Profile</button>
+                                <button class="btn btn-primary profile-button mx-4" id="closeProfileButton" type="button">Close Profile</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% endblock %}
+        </div>
+    </div>
+    <script>
+        document.getElementById('closeProfileButton').addEventListener('click', function() {
+            window.location.href = "{{ url_for('index') }}";
+        });
+    </script>
+
+</body>
+
+</html>

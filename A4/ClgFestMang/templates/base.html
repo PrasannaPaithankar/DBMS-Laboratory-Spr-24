@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    crossorigin="anonymous" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="../static/base_style.css">
+
+  <title>{% block title %}Home{% endblock %}</title>
+</head>
+
+<body>
+  <section>
+    <nav class="stroke">
+      <div class="left">
+        <ul>
+          <li><a class="nav-item nav-link" id="home" href="/">Home</a></li>
+          <li><a class="nav-item nav-link" id="events" href="/events">Events</a></li>
+          <li>
+            <a class="nav-item nav-link" id="about" href="/schedule">Schedule</a>
+          </li>
+        </ul>
+      </div>
+      <div class="right">
+        {% if user %}
+        <ul>
+          {% if role %}
+            {% if role == 'organizer' %}
+            <li><a class="nav-item nav-link" id="Organize" href="/organizerPanel">Organizer Panel</a></li>
+            {% endif %}
+
+            {% if role == 'volunteer' or role == 'user' %}
+            <li><a class="nav-item nav-link" id="Volunteer" href="/volunteerdashboard">Notifications</a></li>
+            {% endif %}
+            {% if role == 'external' %}
+            <li><a class="nav-item nav-link" id="food" href="/food">FOOD</a></li>
+            {% endif %}
+          {% endif %}
+          <li><a class="nav-item nav-link" id="logout" href="/auth/logout">Logout</a></li>
+          <li><a class="nav-item nav-link" id="logout" href="/profile">View Profile</a></li>
+        </ul>
+        {% else %}
+        <ul>
+          <li><a class="nav-item nav-link" id="login" href="/auth/login">Login</a></li>
+          <li><a class="nav-item nav-link" id="signUp" href="/auth/register">Register</a></li>
+        </ul>
+        {% endif %}
+        <form method = "POST" action = "/search" class = "search-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <div class="form-group">
+              <input type="text" class="form-control" id="query" name="query" placeholder="Search Events">
+          </div>
+       </form>
+      </div>
+    </nav>
+  </section>
+
+  <div class="message mx-auto" style="max-width: 30%; margin-top: 80px;">
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %} {% if category ==
+      'error' %}
+      <div class="alert alert-danger alter-dismissable fade show" role="alert">
+        {{ message }}
+        <button type="button" class="close" data-dismiss="alert">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      {% else %}
+      <div class="alert alert-success alter-dismissable fade show" role="alert">
+        {{ message }}
+        <button type="button" class="close" data-dismiss="alert">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      {% endif %} {% endfor %} {% endif %} {% endwith %}
+  </div>
+  <div class="container">
+    {% block content %}{% endblock %}
+  </div>
+
+  <script>
+    function searchOnEnter(event) {
+      if (event.key === "Enter") {
+        event.preventDefault(); // Prevent form submission
+        event.target.closest("form").submit(); // Submit the form
+      }
+    }
+  </script>  
+  
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+
+
+</body>
+
+</html>

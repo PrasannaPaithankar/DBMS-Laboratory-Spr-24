@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Search Results{% endblock %}
+{% block content %}
+<h2>Search Results</h2>
+<br><br>
+
+{% if events %}
+<div class="container">
+    <ul class="list-group">
+        {% for event in events %}
+        <div class="card">
+            <li class="list-group-item name">
+                <a class="nav-item nav-link" href="{{ url_for('event', EID=event.EID) }}">{{ event.EName }}</a>
+            </li>
+            <li class="list-group-item" style="color:black;">
+                {{ event.Date }}
+            </li>
+        </div>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+{% if not events %}
+<p>No results found.</p>
+{% endif %}
+{% endblock %}

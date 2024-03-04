@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Events{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="text-center mb-5">Schedule</h1>
+            <div class="table-responsive rounded">
+                <table class="table table-striped table-bordered table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Event Name</th>
+                            <th>Event Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in events %}
+                        <tr>
+                            <td><a href="{{ url_for('event', EID=event.EID) }}" class="text-white event-link">{{
+                                    event.EName }}</a></td>
+                            <td class="text-white">{{ event.Date }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .text-white {
+        color: white;
+    }
+
+    .event-link {
+        transition: color 0.3s ease;
+    }
+
+    .event-link:hover {
+        color: lightgray;
+    }
+
+    .table-hover tbody tr {
+        transition: background-color 0.5s;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #4b5f6e;
+    }
+</style>
+
+{% endblock %}

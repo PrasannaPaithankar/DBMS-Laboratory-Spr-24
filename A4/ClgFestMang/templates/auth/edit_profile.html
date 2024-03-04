@@ -1,0 +1,79 @@
+{% extends "auth/register.html" %}
+{% block title %}Register{% endblock %}
+<link rel="stylesheet" href="../static/form_style.css">
+{% block form_content %}
+<div class="container">
+    <form method="POST">
+        <h1>Edit Profile</h1>
+        <br>
+        <div class="input-box">
+            <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Edit email"
+                required
+            />
+        </div>
+        <div class="input-box">
+            <input
+                type="text"
+                id="name"
+                name="name"
+                placeholder="name"
+            />
+        </div>
+    
+        {% if role == "external" %}
+        <div class="input-box" id="accommodation">
+            <select id="accommodation" name="accommodation">
+                <option value="None">Edit accommodation</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+        </div>
+    
+        <div class="input-box" id="vegnonveg">
+            <select id="vegnonveg" name="vegnonveg">
+                <option value="None">Edit food preference</option>
+                <option value="False">Veg</option>
+                <option value="True">Non-Veg</option>
+            </select>
+        </div>
+        {% endif %}
+    
+        <div class="input-box">
+            <input
+                type="password"
+                id="old_password"
+                name="old_password"
+                placeholder="Enter old password"
+            />
+        </div>
+        <h4 align="center">Change Password</h4>
+        <div class="input-box">
+            <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Enter new password"
+            />
+        </div>
+        <div class="input-box">
+            <input
+                type="password"
+                class="form-control"
+                id="confirm_password"
+                name="confirm_password"
+                placeholder="Confirm new password"
+            />
+        </div>
+        <br />
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <button type="submit" class="btn">Save changes</button>
+        <div class="register-link">
+            <p><a href="{{ url_for('profile') }}">Go Back</a></p>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "./auth/register.html" %}
+
+{% block title %}Food{% endblock %}
+
+{% block form_content %}
+    <div class="container">
+        <form method="POST" class="food-form">
+            <h1>ADD FOOD</h1>
+
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="input-box">
+                <select id="foodType" name="foodtype">
+                    <option disabled selected value="">Select Food Type</option>
+                    <option value="true">Non-Veg</option>
+                    <option value="false">Veg</option>
+                </select>
+            </div>
+
+            <div class="input-box">
+                <input type="text" id="name" name="name" placeholder="Enter Food Name" required>
+            </div>
+
+            <div class="input-box">
+                <input type="text" id="detail" name="detail" placeholder="Enter Food Detail" required>
+            </div>
+
+            <button type="submit" class="btn">Add</button>
+        </form>
+
+        <div class="register-link">
+            <p><a href="{{url_for('organizerPanel')}}">Go Back</a></p>
+        </div>
+    </div>
+{% endblock %}

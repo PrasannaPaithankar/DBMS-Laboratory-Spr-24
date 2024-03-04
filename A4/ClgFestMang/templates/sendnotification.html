@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<style>
+    .btn-primary:hover {
+        background-color: #007bff !important; /* Change to blue color on hover */
+        border-color: #007bff !important;
+    }
+
+    /* Darken the label color */
+    label[for="volunteers"] {
+        color: #555; /* Adjust the color to your preference */
+    }
+</style>
+
+<div class="container text-center mt-5" style="background-color: #f5f5f5; padding: 20px; border-radius: 10px;">
+    <h1 class="mb-4">Send Notification to Volunteers</h1>
+
+    <form method="POST">
+        <div class="form-group">
+            <!-- Show drop-down menu of volunteers list -->
+            <label for="volunteers" style="font-weight: bold;">Select a Volunteer:</label>
+            <select id="volunteers" name="volunteers" class="form-control">
+                {% for volunteer in volunteers %}
+                    <option value="{{ volunteer.Roll }}">{{ volunteer.Name }} ({{ volunteer.Roll }})</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Text Message -->
+        <div class="form-group">
+            <label for="message" style="color: #555; font-weight: bold;">Enter Message:</label>
+            <textarea
+                class="form-control"
+                id="message"
+                name="message"
+                rows="4"
+                placeholder="Enter your message here"
+                style="background-color: #ffffff; border: 1px solid #d3d3d3; border-radius: 5px;"
+            ></textarea>
+        </div>
+
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <button type="submit" class="btn btn-primary btn-lg" style="background-color: #6c757d; border-color: #6c757d;">Send</button>
+    </form>
+</div>
+{% endblock %}
