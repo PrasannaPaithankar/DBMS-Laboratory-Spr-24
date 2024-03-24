@@ -1,5 +1,5 @@
 {
-    "SQLALCHEMY_DATABASE_URI": "postgresql://postgres:21CS10089@localhost/clgfestmang",
+    "SQLALCHEMY_DATABASE_URI": "postgresql://prasanna:prasanna@localhost/clgfestmang",
     "SQLALCHEMY_TRACK_MODIFICATIONS": false,
     "SQLALCHEMY_ECHO": true,
     "SESSION_TYPE": "filesystem",
@@ -11,5 +11,5 @@
     "MAIL_USE_TLS": true,
     "MAIL_USE_SSL": false,
     "MAIL_USERNAME": "vrslightmodecoders@gmail.com",
-    "MAIL_PASSWORD": "mamfyuvcggdfhewh"
+    "MAIL_PASSWORD": "vdoreoovzpahledx"
 }
