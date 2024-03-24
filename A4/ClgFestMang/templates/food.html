@@ -1,85 +1,35 @@
-{% extends "profile.html" %}
-{% block title %}Event{% endblock %}
-{% block content %}
-<div class="col-md-4 border-right">
-    <a href="#" onclick="goToEvents()" class="btn btn-primary mt-2 bg-transparent text-dark btn-lg">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-arrow-left-circle"
-        viewBox="0 0 16 16">
-        <path fill-rule="evenodd"
-          d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5z" />
-      </svg> Back to Events
-    </a>
+{% extends "base.html" %}
 
-  <div class="d-flex flex-column align-items-center text-center p-3 py-5"><img
-      class="img-thumbnail mt-5 mb-5 w-100 h-100" width="150px" src="../static/event.avif">
-    <span class="font-weight-bold font-large">{{ event.EName
-      }}</span>
-    <span class="text-black-50">
-      DBMS Fest 2024
-    </span>
-  </div>
-</div>
-<div class="col-md-8">
-  <div class="p-3 py-5">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <h4 class="text-right">Event Details</h4>
+{% block title %}Food{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h2 class="text-center mb-4">Food Menu</h2>
+
+        <div class="row">
+            {% if foodtype %}
+                {% for food in foods %}
+                    <div class="col-md-4 mb-2">
+                        <div class="card text-white bg-primary w-75 mx-auto" style="background-image: linear-gradient(to bottom right, rgb(126, 145, 172), #15486D);">
+                            <div class="card-header">{{food.Name}}</div>
+                            <div class="card-body">
+                                <p class="card-text">{{food.detail}}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+            {% for food in foods %}
+            <div class="col-md-4 mb-2">
+                <div class="card text-white bg-primary w-75 mx-auto" style="background-image: linear-gradient(to bottom right, rgb(126, 145, 172), #15486D);">
+                    <div class="card-header">{{food.Name}}</div>
+                    <div class="card-body">
+                        <p class="card-text">{{food.detail}}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
     </div>
-    <div class="card">
-      <div class="card-body">
-        <p class="card-text"><strong>Date:</strong> {{ event.Date }}</p>
-        <p class="card-text"><strong>Description:</strong> {{ event.Desc }}</p>
-        <p class="card-text"><strong>Venue:</strong> {{ event.Venue }}</p>
-        <p class="card-text"><strong>Sponsor:</strong> {{ event.Sponsor }}</p>
-        <p class="card-text"><strong>Winner 1:</strong> {{ event.Winner1 }}</p>
-        <p class="card-text"><strong>Winner 2:</strong> {{ event.Winner2 }}</p>
-        <p class="card-text"><strong>Winner 3:</strong> {{ event.Winner3 }}</p>
-      </div>
-    </div>
-    <div class="card mt-5">
-      <div class="card-body">
-        <h5 class="card-title">Register for Event</h5>
-        <form method="POST">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-          {% if user %}
-          {% if role == 'external' %}
-          {% if already_part %}
-          <p>You have already registered for this event as a participant</p>
-          {% elif event_already_passed %}
-          <p>This event has already passed. Registration is closed.</p>
-          {% else %}
-          <input type="hidden" name="role" value="external">
-          <button type="submit" class="btn btn-primary" name="register_as" value="participant">Register as
-            participant</button>
-          {% endif %}
-          {% elif role == 'user' or role == 'volunteer' %}
-          {% if already_part %}
-          <p>You have already registered for this event as a participant</p>
-          {% elif event_already_passed %}
-          <p>This event has already passed. Registration is closed.</p>
-          {% else %}
-          {% if already_vol %}
-          <p>You have already registered for this event as a volunteer</p>
-          {% else %}
-          <input type="hidden" name="role" value="student">
-          <button type="submit" class="btn btn-primary" name="register_as" value="participant">Register as
-            participant</button>
-          <input type="hidden" name="role" value="volunteer">
-          <button type="submit" class="btn btn-primary" name="register_as" value="volunteer">Register as
-            volunteer</button>
-          {% endif %}
-          {% endif %}
-          {% endif %}
-          {% else %}
-          <p>You need to be logged in to register for this event</p>
-          {% endif %}
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-<script>
-  function goToEvents() {
-    window.location.href = "{{ url_for('events') }}";
-  }
-</script>
 {% endblock %}

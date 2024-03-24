@@ -51,25 +51,23 @@ def register():
         if error is None:
             try:
                 if role == 'Student':
-                    user = models.Student(Name=username, username=name,
-                                          email=email,
-                                          password=generate_password_hash(
-                                              password),
-                                          Dept=dept, RID=1, gender=gender)
+                    user = models.Student(Name = username, username = name,email=email,
+                                                password=generate_password_hash(
+                                                password),
+                                                Dept=dept, RID=1, gender=gender)
 
                 elif role == 'ExternalParticipant':
                     accomodation = random.choice(
                         ['Azad', 'Nehru', 'Patel', 'MS', 'HJB'])
                     if accomodation == "No":
                         accomodation = None
-                    user = models.Participant(Name=username, username=name,
-                                              email=email,
-                                              password=generate_password_hash(
-                                                  password),
-                                              CName=college,
-                                              accomodation=accomodation,
-                                              vegnonveg=vegnonveg,
-                                              gender=gender)
+                    user = models.Participant(Name = username, username = name, email=email,
+                                                password=generate_password_hash(
+                                                password),
+                                                CName=college,
+                                                accomodation=accomodation,
+                                                vegnonveg=vegnonveg,
+                                                gender=gender)
 
                 database.db_session.add(user)
                 database.db_session.commit()
@@ -79,8 +77,8 @@ def register():
                 elif role == 'ExternalParticipant':
                     body = f'Hello {username},\n\nYou have successfully registered for Techno Heist 2024.\n\nAccomodation allotted: {accomodation}\n\nRegards,\nTechno Heist 2024 Team.'
                 msg = Message(subject,
-                              sender=config['MAIL_USERNAME'],
-                              recipients=[email])
+                                sender=config['MAIL_USERNAME'],
+                                recipients=[email])
                 msg.body = body
                 mail.send(msg)
                 flash('Successfully registered', 'success')
@@ -106,10 +104,9 @@ def login():
             if user is None:
                 user = models.Student.query.filter_by(email=username).first()
         elif role == 'ExternalParticipant':
-            user = models.Participant.query.filter_by(Name=username).first()
+            user =models.Participant.query.filter_by(Name=username).first()
             if user is None:
-                user = models.Participant.query.filter_by(
-                    email=username).first()
+                user = models.Participant.query.filter_by(email=username).first()
 
         if user is None:
             error = 'Incorrect username.'
@@ -131,7 +128,6 @@ def login():
         flash(error)
     return render_template('auth/login.html')
 
-
 @bp.route('/forgotPassword', methods=('GET', 'POST'))
 def forgotPassword():
     if request.method == 'POST':
@@ -143,20 +139,19 @@ def forgotPassword():
             user = models.Participant.query.filter_by(email=email).first()
             if user is None:
                 error = 'User email is not registered.'
-
+        
         if error is None:
             try:
-                password = ''.join(random.choice(
-                    '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') for i in range(10))
+                password = ''.join(random.choice('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') for i in range(10))
                 user.password = generate_password_hash(password)
                 database.db_session.commit()
 
                 subject = 'Password Reset for Techno Heist 2024'
                 body = f'Hello {user.Name},\n\nYour password has been reset for Techno Heist 2024.\n\nYour new password is: {password}\nIt is recommended to edit your password in Edit Profile.\n\nRegards,\nTechno Heist 2024 Team.'
-
+    
                 msg = Message(subject,
-                              sender=config['MAIL_USERNAME'],
-                              recipients=[email])
+                                sender=config['MAIL_USERNAME'],
+                                recipients=[email])
                 msg.body = body
                 mail.send(msg)
                 flash('Password reset link sent to your email.', 'success')
@@ -167,12 +162,11 @@ def forgotPassword():
         flash(error)
     return render_template('auth/forgotPassword.html')
 
-
 @bp.route('/edit_profile', methods=('GET', 'POST'))
 def edit_profile():
     if request.method == 'POST':
         error = None
-
+        
         user_id = g.user
         user_role = g.role
         user = None
@@ -191,8 +185,7 @@ def edit_profile():
             if not check_password_hash(user.password, old_password):
                 error = 'Incorrect password.'
                 flash(error)
-                return render_template('auth/edit_profile.html', user=user,
-                                       role=user_role)
+                return render_template('auth/edit_profile.html', user=user, role=user_role)
 
             if vegnonveg == "False":
                 vegnonveg = False
@@ -202,29 +195,27 @@ def edit_profile():
             # try :
             if email != '':
                 user.email = email
-            if not (password == '' and confirm_password == ''):
+            if not(password == '' and confirm_password == ''):
                 if password == confirm_password:
-                    user.password = generate_password_hash(password)
+                    user.password = generate_password_hash(password)   
                 else:
                     error = 'Passwords do not match.'
                     flash(error)
-                    return render_template('auth/edit_profile.html', user=user,
-                                           role=user_role)
-
+                    return render_template('auth/edit_profile.html', user=user, role=user_role)
+            
             if username != '':
-                user.username = username
+                    user.username = username
 
             if accomodation != 'None':
                 if accomodation == "No":
-                    user.accomodation = "No"
+                    user.accomodation = "No"   
                 elif accomodation == "Yes":
                     user.accomodation = random.choice(
-                        ['Azad', 'Nehru', 'Patel', 'MS', 'HJB', 'RP', 'LLR',
-                         'SNIG', 'MAIN BUILDING'])
+                    ['Azad', 'Nehru', 'Patel', 'MS', 'HJB','RP','LLR','SNIG','MAIN BUILDING'])   
             if vegnonveg != "None":
                 user.vegnonveg = vegnonveg
             database.db_session.commit()
-
+          
         else:
             user = models.Student.query.filter_by(Roll=user_id).first()
             email = request.form['email']
@@ -235,8 +226,7 @@ def edit_profile():
             if not check_password_hash(user.password, old_password):
                 error = 'Incorrect password.'
                 flash(error)
-                return render_template('auth/edit_profile.html', user=user,
-                                       role=user_role)
+                return render_template('auth/edit_profile.html', user=user, role=user_role)
 
             try:
                 if email != '':
@@ -261,17 +251,16 @@ def edit_profile():
                 if email != '':
                     email = user.email
                 msg = Message(subject,
-                              sender=config['MAIL_USERNAME'],
-                              recipients=[email])
+                                sender=config['MAIL_USERNAME'],
+                                recipients=[email])
                 msg.body = body
                 mail.send(msg)
                 flash('Profile updated successfully.', 'success')
             except:
                 error = 'Failed to update profile.'
                 flash(error)
-
-        return render_template('auth/edit_profile.html', user=user,
-                               role=user_role)
+        
+        return render_template('auth/edit_profile.html', user=user, role=user_role)
 
     return render_template('auth/edit_profile.html', role=g.role)
 
