@@ -14,6 +14,7 @@ def create_app():
     csrf.init_app(app)
 
     # Initialize llm here
+    llm = ""
 
     embeddings = HuggingFaceEmbeddings()
     vector_store = Solr(embeddings)
