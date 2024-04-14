@@ -27,7 +27,38 @@ def create_app():
         # chats = mongo.db.chats.find({})
         # myChats = [chat for chat in chats]
         # print(myChats)
-        return render_template("index.html", myChats = [])
+        answer = request.args.get("answer")
+
+        if answer is None:
+            answer = ""
+
+        print(f"Answer: {answer}")
+        # myChats = [{"question":"hello","answer":"hi"},{"question":"how are you","answer":"I am fine"}]
+        # print(myChats)
+
+        # answers = []
+
+        # answers.append(answer)
+        # print(answers)
+        return render_template("index.html", answer=answer)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+    
+    @app.route('/submitmessage', methods=['POST'])
+    def submitmessage():
+        # Accept the form data
+        # print("Hello submit message")
+        if request.method == "POST":
+            question = request.form["questionInput"]
+            # print(question)
+            # print("IF")
+            answer = "LLM will answer" + question
+        else:
+            print("Error")
+            answer = "Some Error with error"
+
+        # print(question)
+
+        # return  home(answer)
+        return redirect(url_for("home", answer=answer))
 
     @app.errorhandler(404)
     def page_not_found(e):

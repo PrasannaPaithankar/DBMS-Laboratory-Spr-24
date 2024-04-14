@@ -823,3 +823,30 @@ video {
 .hover\:opacity-70:hover {
   opacity: 0.7;
 }
+
+.scroll-container {
+  max-height: 200px; /* Set the maximum height */
+  overflow-y: auto; /* Enable vertical scrolling when content exceeds height */
+  background-color: transparent; /* Background color for the div */
+  padding: 10px; /* Add some padding for better readability */
+  max-width: 80%;
+}
+
+/* Optional: Style for the scrollbar */
+.scroll-container::-webkit-scrollbar {
+  width: 8px;
+  height: 100px;
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+  background-color: darkgray;
+  border-radius: 4px;
+}
+
+.scroll-container::-webkit-scrollbar-track {
+  background-color: #f2f2f2;
+}
+
+.form-div {
+  margin-top: 20px; /* Add margin to separate from scrollable div */
+}
