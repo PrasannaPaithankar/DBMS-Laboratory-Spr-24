@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "silken-agent-420312",
+  "private_key_id": "1464c99084fe97a5bd9d298ffecc5f91619cae9f",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCWCLLM9gkXm6o/\ndCiypIUERFDuAWqDMsL0vtSXsc0PolB26X0uhvR8ML2829HDJZcWu+IJ52vDlxvI\n6cd9KEBFBKoG+tyjGm8kK9RvWJrlIFgGjeszGC/tiBd6Mg3T6I2eP+MqcrLEKO0Y\nOJmdVhXxBwqjXhECAAqMAqDY3GEsfKP0t3fazREYH4LTR5z+H3KB4JOcijbfAMgn\ntCL13G3UUq6CZdqMsymKym6duI2Wppnd0y5cayuFY5ZAFHgM9cKv5jB0K1YPS/A1\nwRkRA2wrYOEcNmehl3Wut6mCePFLDsQVPJBI74eTXNZMRR8j+vIAkMOBJQ3hwz+F\nMpHaXr8bAgMBAAECggEAEXDobCgrzWlEpMS5mG7EocbZS5mxipfjjvUCHLJIHsml\nJfWlnjuE/0zhOauqGk/r3PIxaCpVXjLaQYRfst5zfjJ5G3+dF37SrbdEpj78Hqeg\nY/6qeVGV/Lxl0kgwUFKH5/4QR9Z2jpQdX8Pwo5gmy9KgO3aLbpqXn0gM77jKuROE\nmzpHG9c1WS2robwXnj+fZcBD/FmS7wuFP4Bs6vkLhNEkeB3Bql7Ds16Uhbb795Vr\nrNwOrjJrfLoHYq5+pI7Roja9nOKQ/GAh47v+ab48dFNngf9+42Z2FGLHa3UukLd9\n9dnl1FKFGmC+MzU2JwKy1lb3ji0jadzKtgfkC1XHwQKBgQDKRgI+jFYryyK52Paj\nLTlNcT0uLVTOSXKa+EW9wTBKMKSO6OSoA+Wi0zKe6DYT4rBwxVVLq0goHIUELPRM\niw/6DIcbRD6WsyJElOorHNrw3+2m9SNRO+CNl/ED7eIyGQ13m9lpcvZBb4F+SZ8o\n9RVOai5VkRMYD5HRevVOsO9F2wKBgQC94o9xhPT3MqR7+yYapqLIqZ/kxFJQWlUp\nAEOweoQrX2C6OrAYzrcLOUn1TNrPXruZgM14s42CjmccOVXsRBIIHK4r/7/tHJVB\nppbpdblaD1LF11X+ZFM1ev/6oxFtsjJErwWDM5QMmW/UiuRqm6xNNg2Nowe1XyGq\n95Ynry3PwQKBgHVAm/ByHUmJmXmuAVqZzovLxrFL6csi3GJk5NiYckuvYtTMwC99\nAtKeJsviw+ZHFAxq94TDpzJJRfojrQHp4rsKJA90QevNr2GeCRgww+G5jOOpWm2u\njf7GQxoJ/YMY7quVFjSARaus3Z29Q5vUZiNsfatwS2c5L0gFRMn22tzdAoGAO8gN\ncybx3LWz9VifqXpW+6fzsBli9OtLrmnn5bLc067mjBsX/+ds13rE3xbAONNRasWT\navHUlorwyYD/nS/dIXKuHyoYqbT7BL1G+99VaJY0cBcYesvpKog7+RPH0+prSxZz\nPNhLPyA7hgXoXev+9hwTbkkqjx6RQftK6dmMKcECgYBRYfKI3ubPeFEPApg+DsTq\n9gCVldCmzDhUnA+wCjarq71He/rlhG0J1P5cvQ/J0kLpzcYBuVS3/1QCujQgDXpY\n5DJEHq3fWSYUqakiVDcBBXwQJJRFmvqfXSS+c+hYkaFRebBmbsdiYUI/RcldWEgn\ne3irpWxWQJ8oFlNlSCJ8Fg==\n-----END PRIVATE KEY-----\n",
+  "client_email": "dbms-dell@silken-agent-420312.iam.gserviceaccount.com",
+  "client_id": "111891106683805038254",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/dbms-dell%40silken-agent-420312.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
