@@ -1,2 +1,5 @@
 */Solr
 /venv
+/data*
+/instance
+./silken*

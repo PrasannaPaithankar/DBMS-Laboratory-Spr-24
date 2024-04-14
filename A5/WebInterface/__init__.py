@@ -1,10 +1,15 @@
 import json
+import os
 
-from flask import (Flask, flash, redirect, render_template, request, session,
-                   url_for)
-# from flask_wtf import CSRFProtect
-# from langchain.embeddings import HuggingFaceEmbeddings
-# from eurelis_langchain_solr_vectorstore import Solr
+from flask import Flask, render_template, request
+from flask_wtf import CSRFProtect
+from langchain import hub
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import RunnablePassthrough
+from langchain_google_genai import GoogleGenerativeAI
+
+from .database import initSolr
+
 
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
@@ -14,13 +19,27 @@ def create_app():
     # csrf.init_app(app)
 
     # Initialize llm here
-    # llm = ""
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/hard_drive/Codes/DBMS-Laboratory-Spr-24/A5/silken-agent-420312-1464c99084fe.json"
+    os.environ["GOOGLE_API_KEY"] = "AIzaSyBAnX6q5rNF6IGtRLnF-epDIEH9_54Qq34"
 
-    # embeddings = HuggingFaceEmbeddings()
-    # vector_store = Solr(embeddings)
+    llm = GoogleGenerativeAI(model="gemini-pro")
+    # llm = ChatVertexAI(model_name="chat-bison")
 
-    # vector_store = Solr(embeddings, core_kwargs={'page_content_field': 'text_t', 'vector_field': 'vector', 'core_name': 'langchain', 'url_base': 'http://localhost:8983/solr'})
-    # retriever = vector_store.as_retriever()
+    print(llm.invoke("Hello, how are you?"))
+
+    vector_store = initSolr("data")
+    retriever = vector_store.as_retriever(search_kwargs={"k": 2})
+    prompt = hub.pull("rlm/rag-prompt")
+
+    def format_docs(docs):
+        return "\n\n".join(doc.page_content for doc in docs)
+
+    rag_chain = (
+        {"context": retriever | format_docs, "question": RunnablePassthrough()}
+        | prompt
+        | llm
+        | StrOutputParser()
+    )
 
     @app.route("/")
     def home():
