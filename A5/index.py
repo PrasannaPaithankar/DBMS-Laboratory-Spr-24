@@ -20,7 +20,7 @@ print(f"Loaded {len(chunked_documents)} documents")
 
 model_name = "sentence-transformers/all-mpnet-base-v2"
 model_kwargs = {'device': 'cpu'}
-encode_kwargs = {'normalize_embeddings': False}
+encode_kwargs = {'normalize_embeddings': True}
 embedding = HuggingFaceEmbeddings(
     model_name=model_name,
     model_kwargs=model_kwargs,
@@ -30,15 +30,10 @@ embedding = HuggingFaceEmbeddings(
 doc_Text = [doc.page_content for doc in chunked_documents]
 embeddings = embedding.embed_documents(doc_Text)
 
-# store embeddings to a file for future use
-with open("data/embeddings_pre.json", "w") as f:
-    json.dump(embeddings, f)
-
-# each json entry is a dictionary with keys 'vector' and 'title'
 json_data = []
 for i, doc in enumerate(chunked_documents):
     json_data.append({"vector": embeddings[i],
-                      "title": doc.metadata["source"]})
+                      "text_t": doc.page_content})
 
 with open("data/data_for_indexing.json", "w") as f:
     json.dump(json_data, f)

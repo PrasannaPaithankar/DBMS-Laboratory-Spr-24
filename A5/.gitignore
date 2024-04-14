@@ -1,5 +1,6 @@
-*/Solr
-/venv
+Solr
+*/venv
+*/__pycache__
 /data*
 /instance
-./silken*
+./silken-agent-420312-1464c99084fe.json
