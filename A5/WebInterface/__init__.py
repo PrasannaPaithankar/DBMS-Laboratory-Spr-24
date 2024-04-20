@@ -14,14 +14,12 @@ from .database import initSolr
 
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
-    # app.config.from_file("config.json", load=json.load)
 
-    # csrf = CSRFProtect()
-    # csrf.init_app(app)
+    csrf = CSRFProtect()
+    csrf.init_app(app)
 
-    # os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/hard_drive/Codes/DBMS-Laboratory-Spr-24/A5/silken-agent-420312-1464c99084fe.json"
-    # os.environ["GOOGLE_API_KEY"] = "AIzaSyBAnX6q5rNF6IGtRLnF-epDIEH9_54Qq34" #Prasanna's API
-    os.environ["GOOGLE_API_KEY"] = "AIzaSyB7fNkDsTA3Gf4yvUP1zcLWxvcYB9OXgHA" # Harsh's API
+    # os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = ""
+    # os.environ["GOOGLE_API_KEY"] = ""
 
     llm = GoogleGenerativeAI(model="gemini-pro")
     print("Model initialized")
