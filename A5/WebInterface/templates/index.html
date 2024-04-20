@@ -6,7 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../static/css/main.css">
-    <link rel="shortcut icon" href="http://codeskulptor-demos.commondatastorage.googleapis.com/descent/bomb_24_24.png" type="image/x-icon">
+    <link rel="shortcut icon" href="http://codeskulptor-demos.commondatastorage.googleapis.com/descent/bomb_24_24.png"
+        type="image/x-icon">
     <style>
         .right2 {
             display: none;
@@ -16,10 +17,10 @@
 </head>
 
 <body class="bg-chatblack-50">
-    <div class="flex h-[100vh] text-white">
-<!--         <div class="left bg-[#202123] w-2/12"> -->
+    <div class="flex h-[100vh] text-white" style="margin-left: 7cm;">
+        <!-- <div class="left bg-[#202123] w-2/12">
 
-            <!-- <button
+            <button
                 class="w-[90%] py-2 m-2 px-10 space-x-2 border-white border rounded-md flex mx-4 justify-start items-center hover:opacity-70">
                 <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
                     stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
@@ -43,9 +44,9 @@
                 </div>
                 {% endfor %}
                 
-            </div> -->
+            </div>
 
-<!--         </div> -->
+        </div> -->
 
 
         <div class="right1 w-10/12 flex justify-center items-center flex-col">
@@ -69,8 +70,7 @@
                     </svg>
                     <div class="py-4">Examples</div>
                     <button
-                        class="bg-gray-600 w-[13vw] text-sm hover:bg-gray-700 py-4 px-4 mx-4  my-2 rounded-md">"Explain
-                        quantum computing in simple terms" →</button>
+                        class="bg-gray-600 w-[13vw] text-sm hover:bg-gray-700 py-4 px-4 mx-4  my-2 rounded-md">Tell me about ...</button>
                 </div>
                 <div class="cap flex flex-col justify-center items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -80,8 +80,8 @@
                     </svg>
                     <div class="py-4">Capabilities</div>
                     <button
-                        class="bg-gray-600 w-[13vw] text-sm hover:bg-gray-700 py-4 px-4 mx-4  my-2 rounded-md">Remembers
-                        what user said earlier in the conversation</button>
+                        class="bg-gray-600 w-[13vw] text-sm hover:bg-gray-700 py-4 px-4 mx-4  my-2 rounded-md">Implements
+                        Retrieval Augmentated Generation using Solr, Gemini-Pro and Langchain</button>
                 </div>
 
                 <div class="lim flex flex-col justify-center items-center">
@@ -99,28 +99,41 @@
                         occasionally generate incorrect information</button>
                 </div>
             </div>
-            
 
-            <div class = "scroll-container">
-                {{answer}}
-            </div>
-                <br>
-                <div>
-                    <form id="messageForm" action="submitmessage" method="POST">
-                        <div class="buttonsvg pl-16 w-[50vw] flex">
-                            <input class="w-full p-4 bg-gray-600 rounded-md" placeholder="Send a Message" type="text" name="questionInput" id="formsubm">
-                            <button id="sendButton" class="relative -left-20 pl-10" type="submit">
-                                <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 mr-1" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                                    <line x1="22" y1="2" x2="11" y2="13"></line>
-                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                                </svg>
-                            </button>
-                        </div>
-                    </form>
+            <h2>Question</h2>
+            <div style="align-items: center;justify-content: center;align-items: center; max-width: 75%;">
+                <div class="scroll-container">
+                    {{question}}
                 </div>
+            </div>
+            <br>
 
-            
-            
+            <h2>Answer</h2>
+            <div style="align-items: center;justify-content: center;align-items: center; max-width: 75%;">
+                <div class="scroll-container">
+                    {{answer}}
+                </div>
+            </div>
+            <br>
+            <div>
+                <form id="messageForm" action="submitmessage" method="POST">
+                    <div class="buttonsvg pl-16 w-[50vw] flex">
+                        <input class="w-full p-4 bg-gray-600 rounded-md" placeholder="Send a Message" type="text"
+                            name="questionInput" id="formsubm">
+                        <button id="sendButton" class="relative -left-20 pl-10" type="submit">
+                            <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24"
+                                stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 mr-1" height="1em"
+                                width="1em" xmlns="http://www.w3.org/2000/svg">
+                                <line x1="22" y1="2" x2="11" y2="13"></line>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                            </svg>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+
+
         </div>
 
 

@@ -5,7 +5,7 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.embeddings import HuggingFaceEmbeddings
 
-path = "data"
+path = "data_full"
 documents = []
 for file in os.listdir(path):
     if file.endswith('.pdf'):
@@ -14,7 +14,7 @@ for file in os.listdir(path):
         loader = PyPDFLoader(pdf_path)
         documents.extend(loader.load())
 
-text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=10)
+text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=10)
 chunked_documents = text_splitter.split_documents(documents)
 print(f"Loaded {len(chunked_documents)} documents")
 
@@ -35,6 +35,6 @@ for i, doc in enumerate(chunked_documents):
     json_data.append({"vector": embeddings[i],
                       "text_t": doc.page_content})
 
-with open("data/data_for_indexing.json", "w") as f:
+with open("data_for_indexing.json", "w") as f:
     json.dump(json_data, f)
-print("Embeddings written to data/data_for_indexing.json")
+print("Embeddings written to data_for_indexing.json")

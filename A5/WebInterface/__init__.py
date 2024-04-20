@@ -14,14 +14,14 @@ from .database import initSolr
 
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
-    app.config.from_file("config.json", load=json.load)
+    # app.config.from_file("config.json", load=json.load)
 
     # csrf = CSRFProtect()
     # csrf.init_app(app)
 
-    # Initialize llm here
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/hard_drive/Codes/DBMS-Laboratory-Spr-24/A5/silken-agent-420312-1464c99084fe.json"
-    os.environ["GOOGLE_API_KEY"] = "AIzaSyBAnX6q5rNF6IGtRLnF-epDIEH9_54Qq34"
+    # os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/hard_drive/Codes/DBMS-Laboratory-Spr-24/A5/silken-agent-420312-1464c99084fe.json"
+    # os.environ["GOOGLE_API_KEY"] = "AIzaSyBAnX6q5rNF6IGtRLnF-epDIEH9_54Qq34" #Prasanna's API
+    os.environ["GOOGLE_API_KEY"] = "AIzaSyB7fNkDsTA3Gf4yvUP1zcLWxvcYB9OXgHA" # Harsh's API
 
     llm = GoogleGenerativeAI(model="gemini-pro")
     print("Model initialized")
@@ -29,7 +29,6 @@ def create_app():
     vector_store = initSolr("data_full")
     retriever = vector_store.as_retriever()
     print("Retriever initialized")
-    # print(retriever.invoke("Present an efficient dynamic algorithm for clustering undirected graphs, whose edge property is changing continuously"))
 
     template = """Question: {question}
 
@@ -40,7 +39,7 @@ def create_app():
     {context}
 
 
-    Detailed answer:"""
+    Detailed long answer:"""
     prompt = PromptTemplate.from_template(template)
 
     def format_docs(docs):
@@ -56,12 +55,13 @@ def create_app():
     @app.route("/")
     def home():
         answer = request.args.get("answer")
-
+        question = request.args.get("question")
         if answer is None:
             answer = ""
+        if question is None:
+            question = ""
 
-        print(f"Answer: {answer}")
-        return render_template("index.html", answer=answer)
+        return render_template("index.html", answer=answer, question=question)
 
     @app.route('/submitmessage', methods=['POST'])
     def submitmessage():
@@ -71,7 +71,7 @@ def create_app():
         else:
             print("Error")
             answer = "Some Error with error"
-        return redirect(url_for("home", answer=answer))
+        return redirect(url_for("home", answer=answer , question = question))
 
     @app.errorhandler(404)
     def page_not_found(e):

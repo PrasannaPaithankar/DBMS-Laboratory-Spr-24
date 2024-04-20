@@ -832,7 +832,6 @@ video {
   overflow-y: auto; /* Enable vertical scrolling when content exceeds height */
   background-color: transparent; /* Background color for the div */
   padding: 10px; /* Add some padding for better readability */
-  max-width: 80%;
 }
 
 /* Optional: Style for the scrollbar */
