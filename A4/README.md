@@ -1,4 +1,6 @@
-# Assignment 4
+# Assignment 4 - College Festival Management Web Application Development
+
+### [Final Project Report](./Assignment4_Report_MDA.pdf)
 
 ### Local setup
 ```bash

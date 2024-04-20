@@ -1,5 +1,5 @@
 run:
-	if [ ! -d ./Solr ]; then (mkdir -p ./Solr && sudo chmod a+rwx ./Solr) fi;sudo docker compose up
+	if [ ! -d ./Solr ]; then (mkdir -p ./Solr && sudo chmod a+rwx ./Solr) fi;sudo docker compose up -d
 
 clean:
 	sudo docker stop $(sudo docker ps -a -q);sudo docker container prune
