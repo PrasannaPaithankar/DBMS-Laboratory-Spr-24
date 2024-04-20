@@ -10,7 +10,7 @@ This repository is intended to organize the course codes and also to collaborate
 - [A5: Utilizing Hadoop Ecosystem to Implement RAG for Chain of Thought Reasoning in Language Models](./A5) (Group assignment)
 
 ### Group - MDA: Masters in Database Administration
-- [Prasanna Paithankar](https://github.com/PrasannaPaithanka) (21CS30065)
+- [Prasanna Paithankar](https://github.com/PrasannaPaithankar) (21CS30065)
 - [Aviral Pandey](https://github.com/viralBot) (21CS10089)
 - [Harsh Sharma](https://github.com/harshsharma2024) (21CS30023)
 - [Ishan Raj](https://github.com/Rajishan589) (21CS10032)
